@@ -1,2 +1,2 @@
-# angular-firestype
+# AngularFirestype
 Type handling for AngularFirestore
