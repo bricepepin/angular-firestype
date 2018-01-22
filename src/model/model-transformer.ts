@@ -1,6 +1,6 @@
 import * as firebase from 'firebase/app';
 
-import { descriptors } from '../angular-firestype.service';
+import { descriptors } from '../angular-firestype.module';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
 
