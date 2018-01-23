@@ -1,16 +1,16 @@
 import * as firebase from 'firebase/app';
 
-import { descriptors } from '../angular-firestype.module';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
 
-/* Transforms a model to data and data to model for a database path */
+/** Transforms a model to data and data to model for a database path */
 export class ModelTransformer<T> {
+    private static descriptors: {[key: string]: ModelType<any>} = {};
     private descriptor: ModelType<T>;
 
     constructor(private path: string = '') {
         const segments: string[] = path.split('/');
-        let current: ModelType<any> = descriptors[segments[0]];
+        let current: ModelType<any> = ModelTransformer.descriptors[segments[0]];
 
         for (const i = 2; i < segments.length; i + 2) {
             const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor<any>(current);
@@ -24,6 +24,11 @@ export class ModelTransformer<T> {
         }
 
         this.descriptor = current;
+    }
+
+    /** Set the available descriptors list */
+    static setDescriptors(descriptors: {[key: string]: ModelType<any>}) {
+        ModelTransformer.descriptors = descriptors || {};
     }
 
     /** Initialize a custom object from data and model descriptor */
