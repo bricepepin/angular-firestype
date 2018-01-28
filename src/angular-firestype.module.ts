@@ -1,10 +1,7 @@
-import { NgModule, InjectionToken } from '@angular/core';
-import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { NgModule } from '@angular/core';
 import 'rxjs/add/operator/first';
 
 import { AngularFirestype } from './angular-firestype.service';
-import { Collection } from './collection/collection';
-import { Document } from './document/document';
 import { ModelTransformer } from './model/model-transformer';
 import { ModelType } from './model/model-type';
 
@@ -13,9 +10,6 @@ import { ModelType } from './model/model-type';
  * where model is an object of ModelType to properly process type handling.
  */
 @NgModule({
-  imports: [
-    AngularFirestoreModule
-  ],
   providers: [
     AngularFirestype
   ]
