@@ -78,7 +78,7 @@ export class ModelTransformer<T> {
         return model;
     }
 
-    /** Return an instanciation of the descriptor with provided data */
+    /** Return an object from a custom type using a descriptor */
     private objectify<U>(model: U, descriptor: ModelType<U>): U {
         const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
         const data = Object.assign({}, model);
@@ -86,7 +86,7 @@ export class ModelTransformer<T> {
          // Objectify submodels
          if (modelDescriptor && modelDescriptor.structure) {
             for (const name of Object.keys(modelDescriptor.structure)) {
-                data[name] = this.objectify<any>(modelDescriptor.structure[name], data[name]);
+                data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
             }
         }
 
