@@ -1,4 +1,5 @@
-import { NgModule } from '@angular/core';
+import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
+import { EnablePersistenceToken } from 'angularfire2/firestore';
 import 'rxjs/add/operator/first';
 
 import { AngularFirestype } from './angular-firestype.service';
@@ -15,8 +16,18 @@ import { ModelType } from './model/model-type';
   ]
 })
 export class AngularFirestypeModule {
-  static forRoot(model: {[key: string]: ModelType<any>}) {
+  /**
+   * Initialize AngularFirestype with the model description.
+   * Optionnaly enable persistance if second parameter is true.
+   */
+  static forRoot(model: {[key: string]: ModelType<any>}, enablePersistence: boolean = false): ModuleWithProviders {
     ModelTransformer.setDescriptors(model);
-    return {ngModule: AngularFirestypeModule};
+
+    return {
+      ngModule: AngularFirestypeModule,
+      providers: [
+        { provide: EnablePersistenceToken, useValue: enablePersistence },
+      ]
+    };
   }
 }

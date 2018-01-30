@@ -60,7 +60,7 @@ export class ModelTransformer<T> {
         // Instanciate submodels
         if (modelDescriptor && modelDescriptor.structure) {
             for (const name of Object.keys(modelDescriptor.structure)) {
-                data[name] = this.instanciate<any>(modelDescriptor.structure[name], data[name]);
+                data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
             }
         }
 
