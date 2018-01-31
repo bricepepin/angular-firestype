@@ -1,7 +1,8 @@
-import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
-import { EnablePersistenceToken } from 'angularfire2/firestore';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { AngularFireModule } from 'angularfire2';
 import 'rxjs/add/operator/first';
 
+import { EnablePersistenceToken } from './enable-persistence-token';
 import { AngularFirestype } from './angular-firestype.service';
 import { ModelTransformer } from './model/model-transformer';
 import { ModelType } from './model/model-type';

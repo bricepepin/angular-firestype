@@ -1,10 +1,10 @@
-import * as firebase from 'firebase/app';
+import { DocumentData, DocumentSnapshot } from '@firebase/firestore-types';
 
 /** A typed Document Snapshot */
-export interface DocumentSnapshot extends firebase.firestore.DocumentSnapshot {
+export interface DocumentSnapshot extends DocumentSnapshot {
     /** Get typed data from this document */
     data(): any;
 
     /** Retrieves all fields of the document as an Object */
-    rawData(): firebase.firestore.DocumentData;
+    rawData(): DocumentData;
 }

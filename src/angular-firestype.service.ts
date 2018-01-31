@@ -1,7 +1,8 @@
 import { Injectable, Optional, Inject } from '@angular/core';
-import { associateQuery, AngularFirestore, EnablePersistenceToken, QueryFn } from 'angularfire2/firestore';
+import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
 import { FirebaseApp } from 'angularfire2';
 
+import { EnablePersistenceToken } from './enable-persistence-token';
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
 

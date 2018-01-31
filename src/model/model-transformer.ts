@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app';
+import { DocumentData } from '@firebase/firestore-types';
 
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
@@ -32,7 +32,7 @@ export class ModelTransformer<T> {
     }
 
     /** Initialize a custom object from data and model descriptor */
-    toModel(data: firebase.firestore.DocumentData): T {
+    toModel(data: DocumentData): T {
         return this.descriptor ? this.instanciate<T>(data, this.descriptor) : data as T;
     }
 
@@ -52,7 +52,7 @@ export class ModelTransformer<T> {
     }
 
     /** Return an instanciation of the descriptor with provided data */
-    private instanciate<U>(data: firebase.firestore.DocumentData, descriptor: ModelType<U>): U {
+    private instanciate<U>(data: DocumentData, descriptor: ModelType<U>): U {
         const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
         const constructor: new (...args: any[]) => U = modelDescriptor ? modelDescriptor.type : descriptor as new (...args: any[]) => U;
         const args: any[] = [];

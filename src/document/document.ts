@@ -1,6 +1,6 @@
+import { DocumentReference, SetOptions } from '@firebase/firestore-types';
 import { AngularFirestoreDocument, associateQuery, QueryFn, Action } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
-import * as firebase from 'firebase/app';
 
 import { ModelTransformer } from '../model/model-transformer';
 import { Collection } from '../collection/collection';
@@ -10,13 +10,13 @@ import { DocumentSnapshot } from './document-snapshot';
 export class Document<T> extends AngularFirestoreDocument<T> {
     private transformer: ModelTransformer<T>;
 
-    constructor(public ref: firebase.firestore.DocumentReference) {
+    constructor(public ref: DocumentReference) {
         super(ref);
         this.transformer = new ModelTransformer<T>(this.ref.path);
     }
 
     /** Set object data to database */
-    set(data: T, options?: firebase.firestore.SetOptions): Promise<void> {
+    set(data: T, options?: SetOptions): Promise<void> {
         return super.set(this.transformer.toData(data), options);
     }
 
