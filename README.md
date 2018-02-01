@@ -71,7 +71,7 @@ import { User } from './user.ts';
 export class AppComponent {
    constructor(db: AngularFirestype) {
        const usersCollection: Collection<User> = db.collection<User>('users');
-       const users: Observable<User[]>  = usersCollection.valueChanges();
+       const users: Observable<User[]> = usersCollection.valueChanges();
 
        const userDoc: Document<User> = usersCollection.doc('user1');
        const user: User = userDoc.valueChanges();
@@ -84,7 +84,7 @@ export class AppComponent {
 In order for AngularFirestype to know how to transform your custom object to raw objects and instanciate them back from Firestore, you need to provide a mapping object containing data about your application model.
 
 The mapping object is a map of `ModelType`, himself either a class for simple custom objects or a `ModelDescriptor` for more complex ones.
-Here is an exemple of mapping object :
+Here is an exemple of a mapping object :
 ```ts
 import { ModelType } from 'angular-firestype';
 import { User } from './user.ts';
@@ -108,18 +108,18 @@ const model: {[key: string]: ModelType<any>} = {    // {[key: string]: ModelType
 
 The mapping object `model` has two entries `messages` and `users`. They both represent a root collection in Firestore : /messages and /users.
 - `messages` will be instances of class `Message`, a simple custom class. A class is simple if it only contains basic types and no custom ones.
-- `users` is more complex one and needs to be described as a `ModelDescriptor`.
+- `users` is a more complex one and needs to be described as a `ModelDescriptor`.
 
  `ModelDescriptor` has the following attributes :
-- `type` : class that will be instanciated for this collection (`User*` for `users` collection).
+- `type` : class that will be instanciated for this collection (`User` for `users` collection).
  The constructor needs to be idempotent to work properly.
 - `arguments` : array of arguments names to send to the constructor.
  If this attribute is defined, the constructor will be called with the values of the arguments names *in order*.
  For exemple, documents of the collection `users` will be instanciated this way : `new User(valueOfUsername, valueOfImage)`.
  If not defined, the constructor is called without arguments, like `new Message()`.
- AngularFirestype only handle object's attributes as constructor arguments. Other ones needs to be optional.
-- `structure` : map of `ModelType`. This is the internal object description. AngularFirestype only needs to know about complex types and automatically handle basic types.
- In the case of `users`, the `structure` attribute is saying that the class `User` has a simple custom type `Address` as attribute `address`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested custom types.
+ AngularFirestype only handle object's attributes as constructor arguments. Other ones need to be optional.
+- `structure` : map of `ModelType`. This is the internal object description. AngularFirestype only needs to know about instanciated types and automatically handle basic types.
+ In the case of `users`, the `structure` attribute is saying that the class `User` has a custom type `Address` as attribute `address`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested custom types.
 - `subcollections` : map of `ModelType`. Map of the collection subcollections and their corresponding custom types.
  Works the same as `structure` but for collections instead of objects.
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
@@ -127,12 +127,12 @@ The mapping object `model` has two entries `messages` and `users`. They both rep
 ## Differences with AngularFirestore
 AngularFirestype presents a few differences with AngularFirestore :
 - The module is initialized via `AngularFirestypeModule.forRoot(model)` :
-    This is used to pass the mapping object to AngularFirestype. If you need offline persistance, you can do it calling `AngularFirestypeModule.forRoot(model, true)`
+    This is used to pass the mapping object to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
     They work with custom types, inferred from the collection path and the mapping object. They also have two additional helper methods :
-  - `current(callback: (model: T[]) => void)` :
+  - `current(callback: (model: T) => void)` :
         Returns the current data to the callback and automatically unsubscribe right after the process. Allows to get data without the need to unsubscribe.
   - `currentSnapshot(callback: (snapshot: DocumentChangeAction[]) => void)` :
         Same as `current(callback)` for a `DocumentSnapshot`
-- `DocumentSnapshot` has a new `rawData()` method allowing to get the data as AngularFirestore would, without instanciation.
 - `DocumentSnapshot`, `DocumentChange` and `DocumentChangeAction` have been redefined to work with custom types.
+- `DocumentSnapshot` has a new `rawData()` method allowing to get the data as AngularFirestore would, without instanciation.

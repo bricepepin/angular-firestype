@@ -1,6 +1,7 @@
 import { Injectable, Optional, Inject } from '@angular/core';
-import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
+import { DocumentReference } from '@firebase/firestore-types';
 import { FirebaseApp } from 'angularfire2';
+import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
 
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { Collection } from './collection/collection';
@@ -33,7 +34,7 @@ export class AngularFirestype extends AngularFirestore {
    * This collection handle the type transformation accept custom objects and return them initialiazed.
    */
   doc<T>(path: string): Document<T> {
-    const ref = this.firestore.doc(path);
+    const ref: DocumentReference = this.firestore.doc(path);
     return new Document<T>(ref);
   }
 }

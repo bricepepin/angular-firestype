@@ -69,7 +69,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * The unsubscribe process is done automatically.
    */
   currentSnapshot(callback: (snapshot: DocumentChangeAction[]) => void) {
-      this.snapshotChanges().first().subscribe(callback);
+    this.snapshotChanges().first().subscribe(callback);
   }
 
   /**
