@@ -53,40 +53,53 @@ export class ModelTransformer<T> {
 
     /** Return an instanciation of the descriptor with provided data */
     private instanciate<U>(data: DocumentData, descriptor: ModelType<U>): U {
-        const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
-        const constructor: new (...args: any[]) => U = modelDescriptor ? modelDescriptor.type : descriptor as new (...args: any[]) => U;
-        const args: any[] = [];
+        let model: U;
 
-        // Instanciate submodels
-        if (modelDescriptor && modelDescriptor.structure) {
-            for (const name of Object.keys(modelDescriptor.structure)) {
-                data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
+        if (data) {
+            const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
+            const constructor: new (...args: any[]) => U = modelDescriptor ? modelDescriptor.type : descriptor as new (...args: any[]) => U;
+            const args: any[] = [];
+
+            // Instanciate submodels
+            if (modelDescriptor && modelDescriptor.structure) {
+                for (const name of Object.keys(modelDescriptor.structure)) {
+                    if (data[name] !== undefined) {
+                        data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
+                    }
+                }
             }
+
+            // Extract constructor arguments
+            if (modelDescriptor && modelDescriptor.arguments) {
+                for (const name of modelDescriptor.arguments) {
+                    args.push(data[name]);
+                    delete data[name];
+                }
+            }
+
+            // Instanciate model and affect data
+            model = new constructor(...args);
+            Object.assign(model, data);
         }
 
-        // Extract constructor arguments
-        if (modelDescriptor && modelDescriptor.arguments) {
-            for (const name of modelDescriptor.arguments) {
-                args.push(data[name]);
-                delete data[name];
-            }
-        }
-
-        // Instanciate model and affect data
-        const model: U = new constructor(...args);
-        Object.assign(model, data);
         return model;
     }
 
     /** Return an object from a custom type using a descriptor */
     private objectify<U>(model: U, descriptor: ModelType<U>): U {
-        const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
-        const data = Object.assign({}, model);
+        let data: U;
 
-         // Objectify submodels
-         if (modelDescriptor && modelDescriptor.structure) {
-            for (const name of Object.keys(modelDescriptor.structure)) {
-                data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+        if (model) {
+            data = Object.assign({}, model);
+            const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
+
+            // Objectify submodels
+            if (modelDescriptor && modelDescriptor.structure) {
+                for (const name of Object.keys(modelDescriptor.structure)) {
+                    if (data[name] !== undefined) {
+                        data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+                    }
+                }
             }
         }
 

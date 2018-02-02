@@ -1,4 +1,6 @@
- # AngularFirestype
+[![npm](https://img.shields.io/npm/v/angular-firestype.svg)](https://www.npmjs.com/package/angular-firestype) [![npm](https://img.shields.io/npm/dt/angular-firestype.svg)](https://www.npmjs.com/package/angular-firestype) [![GitHub stars](https://img.shields.io/github/stars/bricepepin/angular-firestype.svg)](https://github.com/bricepepin/angular-firestype) [![npm](https://img.shields.io/npm/l/angular-firestype.svg)](https://www.npmjs.com/package/angular-firestype) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9SXR8KQPHKUG6)
+
+# AngularFirestype
 Type handling for AngularFirestore
 
 This module extends AngularFirestore with type handling.
@@ -136,3 +138,10 @@ AngularFirestype presents a few differences with AngularFirestore :
         Same as `current(callback)` for a `DocumentSnapshot`
 - `DocumentSnapshot`, `DocumentChange` and `DocumentChangeAction` have been redefined to work with custom types.
 - `DocumentSnapshot` has a new `rawData()` method allowing to get the data as AngularFirestore would, without instanciation.
+
+## Contribution
+Any contribution is appreciated : simply use AngularFirestype, talk about it, give some feedback or even develop something. And if you feel like it, you can support me through Paypal :
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9SXR8KQPHKUG6)
+
+In all cases, thank you for your interest in AngularFirestype !

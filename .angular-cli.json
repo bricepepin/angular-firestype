@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "angular-firestype"
+  },
+  "apps": [
+    {
+      "root": "src",
+      "outDir": "dist",
+      "main": "index.d.ts",
+      "polyfills": "polyfills.ts",
+      "test": "test.ts",
+      "testTsconfig": "tsconfig.spec.json",
+      "prefix": "aft"
+    }
+  ],
+  "lint": [
+    {
+      "project": "src/tsconfig.spec.json",
+      "exclude": "**/node_modules/**"
+    }
+  ],
+  "test": {
+    "karma": {
+      "config": "./karma.conf.js"
+    }
+  }
+}
