@@ -1,5 +1,5 @@
-<a name="5.0.0-beta.0"></a>
-# 5.0.0-beta.0 (2018-01-31)
+<a name="5.0.0"></a>
+# 5.0.0 (2018-02-03)
 
-First beta release, version 5.0.0-beta.0 to match angular versioning.
+First release, version 5.0.0 to match angular & angularfire2 versioning.
 

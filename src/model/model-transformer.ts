@@ -12,14 +12,13 @@ export class ModelTransformer<T> {
         const segments: string[] = path.split('/');
         let current: ModelType<any> = ModelTransformer.descriptors[segments[0]];
 
-        for (const i = 2; i < segments.length; i + 2) {
+        for (let i = 2; i < segments.length; i += 2) {
             const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor<any>(current);
 
-            if (modelDescriptor && modelDescriptor.subcollections) {
+            if (modelDescriptor && modelDescriptor.subcollections && modelDescriptor.subcollections[segments[i]]) {
                 current = modelDescriptor.subcollections[segments[i]];
             } else {
-                current = null;
-                break;
+                throw new Error('Model descriptor not found for path: ' + path);
             }
         }
 
@@ -33,7 +32,7 @@ export class ModelTransformer<T> {
 
     /** Initialize a custom object from data and model descriptor */
     toModel(data: DocumentData): T {
-        return this.descriptor ? this.instanciate<T>(data, this.descriptor) : data as T;
+        return this.instanciate<T>(data, this.descriptor);
     }
 
     /** Get data from a custom object and model descriptor */

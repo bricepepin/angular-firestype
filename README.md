@@ -126,10 +126,13 @@ The mapping object `model` has two entries `messages` and `users`. They both rep
  Works the same as `structure` but for collections instead of objects.
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
 
+AngularFiretype add some model checking : you cannot add a document to a collection not defined in your mapping object. If you try to do so, you'll get the following error: *Model descriptor not found for path: your/current/path*
+
 ## Differences with AngularFirestore
 AngularFirestype presents a few differences with AngularFirestore :
 - The module is initialized via `AngularFirestypeModule.forRoot(model)` :
     This is used to pass the mapping object to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
+- You cannot add a document to a collection not defined in AngularFiretype's model mapping.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
     They work with custom types, inferred from the collection path and the mapping object. They also have two additional helper methods :
   - `current(callback: (model: T) => void)` :
