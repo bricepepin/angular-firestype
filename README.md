@@ -71,12 +71,16 @@ import { User } from './user.ts';
  styleUrls: ['app.component.css']
 })
 export class AppComponent {
+   const users: Observable<User[]>;
+   const user: User;
+
    constructor(db: AngularFirestype) {
        const usersCollection: Collection<User> = db.collection<User>('users');
-       const users: Observable<User[]> = usersCollection.valueChanges();
+       usersCollection.valueChanges().subscribe(users => this.users = users);
 
        const userDoc: Document<User> = usersCollection.doc('user1');
-       const user: User = userDoc.valueChanges();
+       userDoc.valueChanges().subscribe(user => this.user = user);
+       userDoc.set(this.user);
    }
 }
 ```
