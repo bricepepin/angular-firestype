@@ -1,9 +1,9 @@
 import { CollectionReference, Query, DocumentChangeType, DocumentReference } from '@firebase/firestore-types';
-import { AngularFirestoreCollection, DocumentChangeAction as afDocumentChangeAction } from 'angularfire2/firestore';
+import { AngularFirestoreCollection, DocumentChangeAction as FDocumentChangeAction } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
 
 import { ModelTransformer } from '../model/model-transformer';
-import { Document } from '../document/document';
+import { Document, typeDocumentSnapshot } from '../document/document';
 import { DocumentChangeAction } from '../document/document-change-action';
 
 export class Collection<T> extends AngularFirestoreCollection<T> {
@@ -57,34 +57,30 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   }
 
   /**
-   * Return current value of the document, without updates afterwards.
+   * Return current value of the collection, without updates afterwards.
    * The unsubscribe process is done automatically.
    */
-  current(callback: (model: T[]) => void) {
-    this.valueChanges().first().subscribe(callback);
+  current(value?: (model: T[]) => void, error?: (error: any) => void, complete?: () => void) {
+    this.valueChanges().first().subscribe(value);
   }
 
   /**
-   * Return current snapshot of the document, without updates afterwards.
+   * Return current snapshot of the collection, without updates afterwards.
    * The unsubscribe process is done automatically.
    */
-  currentSnapshot(callback: (snapshot: DocumentChangeAction[]) => void) {
-    this.snapshotChanges().first().subscribe(callback);
+  currentSnapshot(value?: (snapshot: DocumentChangeAction[]) => void, error?: (error: any) => void, complete?: () => void) {
+      this.snapshotChanges().first().subscribe(value);
   }
 
   /**
    * Cast generic actions to typed ones
    * @param actions : array of action to cast
    */
-  private toTypedActions(actions: afDocumentChangeAction[]): DocumentChangeAction[] {
-    const typedActions = actions as DocumentChangeAction[];
+  private toTypedActions(actions: FDocumentChangeAction[]): DocumentChangeAction[] {
+    for (const element of actions) {
+      typeDocumentSnapshot<T>(element.payload.doc, this.transformer);
+    }
 
-      for (const element of typedActions) {
-        const document = element.payload.doc;
-        document.rawData = document.data;
-        document.data = () => this.transformer.toModel(document.rawData());
-      }
-
-      return typedActions;
+    return actions as DocumentChangeAction[];
   }
 }

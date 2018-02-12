@@ -1,11 +1,12 @@
 import { Injectable, Optional, Inject } from '@angular/core';
-import { DocumentReference } from '@firebase/firestore-types';
+import { DocumentReference, Transaction as FTransaction} from '@firebase/firestore-types';
 import { FirebaseApp } from 'angularfire2';
 import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
 
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
+import { Transaction } from './transaction/transaction';
 
 /**
  * Type handling for AngularFirestore
@@ -36,5 +37,25 @@ export class AngularFirestype extends AngularFirestore {
   doc<T>(path: string): Document<T> {
     const ref: DocumentReference = this.firestore.doc(path);
     return new Document<T>(ref);
+  }
+
+  /**
+   * Executes the given updateFunction and then attempts to commit the
+   * changes applied within the transaction. If any document read within the
+   * transaction has changed, the updateFunction will be retried. If it fails
+   * to commit after 5 attempts, the transaction will fail.
+   *
+   * @param updateFunction The function to execute within the transaction
+   * context.
+   * @return If the transaction completed successfully or was explicitly
+   * aborted (by the updateFunction returning a failed Promise), the Promise
+   * returned by the updateFunction will be returned here. Else if the
+   * transaction failed, a rejected Promise with the corresponding failure
+   * error will be returned.
+   */
+  runTransaction<T>(updateFunction: (transaction: Transaction) => Promise<T>): Promise<T> {
+    return this.firestore.runTransaction(fTransaction => {
+      return updateFunction(new Transaction(fTransaction));
+    });
   }
 }

@@ -1,10 +1,18 @@
-import { DocumentReference, SetOptions } from '@firebase/firestore-types';
+import { DocumentReference, DocumentSnapshot as FDocumentSnapshot, SetOptions } from '@firebase/firestore-types';
 import { AngularFirestoreDocument, associateQuery, QueryFn, Action } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
 
 import { ModelTransformer } from '../model/model-transformer';
 import { Collection } from '../collection/collection';
 import { DocumentSnapshot } from './document-snapshot';
+
+/** Return a typed DocumentSnapshot from a generic one and a transformer */
+export function typeDocumentSnapshot<T>(fDocumentSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>): DocumentSnapshot {
+    const documentSnapshot = fDocumentSnapshot as DocumentSnapshot;
+    documentSnapshot.rawData = documentSnapshot.data;
+    documentSnapshot.data = () => transformer.toModel(documentSnapshot.rawData());
+    return documentSnapshot;
+}
 
 /** Typed document */
 export class Document<T> extends AngularFirestoreDocument<T> {
@@ -35,10 +43,8 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     /** Listen to snapshot updates from the document. */
     snapshotChanges(): Observable<Action<DocumentSnapshot>> {
         return super.snapshotChanges().map(action => {
-            const typedAction = action as Action<DocumentSnapshot>;
-            typedAction.payload.rawData = typedAction.payload.data;
-            typedAction.payload.data = () => this.transformer.toModel(typedAction.payload.rawData());
-            return typedAction;
+            typeDocumentSnapshot<T>(action.payload, this.transformer);
+            return action as Action<DocumentSnapshot>;
         });
     }
 
@@ -46,15 +52,15 @@ export class Document<T> extends AngularFirestoreDocument<T> {
      * Return current value of the document, without updates afterwards.
      * The unsubscribe process is done automatically.
      */
-    current(callback: (model: T) => void) {
-        this.valueChanges().first().subscribe(callback);
+    current(value?: (model: T) => void, error?: (error: any) => void, complete?: () => void) {
+        this.valueChanges().first().subscribe(value);
     }
 
     /**
      * Return current snapshot of the document, without updates afterwards.
      * The unsubscribe process is done automatically.
      */
-    currentSnapshot(callback: (snapshot: Action<DocumentSnapshot>) => void) {
-        this.snapshotChanges().first().subscribe(callback);
+    currentSnapshot(value?: (snapshot: Action<DocumentSnapshot>) => void, error?: (error: any) => void, complete?: () => void) {
+        this.snapshotChanges().first().subscribe(value);
     }
 }
