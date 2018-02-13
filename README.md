@@ -8,7 +8,7 @@ Using a mapping object, it can add custom objects and get instanciated data from
 
 ## Install
 ```bash
-npm install angular-firestype --save
+npm install firebase angularfire2 angular-firestype --save
 ```
 
 ## Use
