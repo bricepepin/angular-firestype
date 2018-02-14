@@ -1,5 +1,5 @@
 import { Injectable, Optional, Inject } from '@angular/core';
-import { DocumentReference, Transaction as FTransaction} from '@firebase/firestore-types';
+import { DocumentReference } from '@firebase/firestore-types';
 import { FirebaseApp } from 'angularfire2';
 import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
 

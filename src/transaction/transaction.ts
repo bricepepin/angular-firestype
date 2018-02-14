@@ -58,11 +58,13 @@ export class Transaction {
      */
     update<T>(document: Document<T>, dataOrField: Partial<T> | string | FieldPath, value?: any, ...moreFieldsAndValues: any[])
             : Transaction {
-        if (typeof dataOrField === 'string' || dataOrField instanceof FieldPath) {
-            this.fTransaction.update(document.ref, dataOrField, value, ...moreFieldsAndValues);
+        if (value !== undefined) {
+            const field = dataOrField as string | FieldPath;
+            this.fTransaction.update(document.ref, field, value, ...moreFieldsAndValues);
         } else {
+            const data = dataOrField as Partial<T>;
             const transformer = new ModelTransformer<T>(document.ref.path);
-            this.fTransaction.update(document.ref, transformer.toPartialData(dataOrField));
+            this.fTransaction.update(document.ref, transformer.toPartialData(data));
         }
 
         return this;
