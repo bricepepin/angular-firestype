@@ -1,3 +1,13 @@
+<a name="5.1.1"></a>
+## 5.1.1 (2018-02-14)
+
+
+### Bug Fixes
+
+* **typings:** Do not use types from [@angular](https://github.com/angular)/firestore-types as values ([94feb76](https://github.com/bricepepin/angular-firestype/commit/94feb76))
+
+
+
 <a name="5.1.0"></a>
 # 5.1.0 (2018-02-12)
 
