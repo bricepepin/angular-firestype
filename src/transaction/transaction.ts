@@ -1,4 +1,5 @@
-import { Transaction as FTransaction, SetOptions, FieldPath } from '@firebase/firestore-types';
+import { Transaction as FTransaction, SetOptions } from '@firebase/firestore-types';
+import { FieldPath } from 'firebase/firestore';
 import { Document, typeDocumentSnapshot } from '../document/document';
 import { DocumentSnapshot } from '../document/document-snapshot';
 import { ModelTransformer } from '../model/model-transformer';
@@ -58,13 +59,11 @@ export class Transaction {
      */
     update<T>(document: Document<T>, dataOrField: Partial<T> | string | FieldPath, value?: any, ...moreFieldsAndValues: any[])
             : Transaction {
-        if (value !== undefined) {
-            const field = dataOrField as string | FieldPath;
-            this.fTransaction.update(document.ref, field, value, ...moreFieldsAndValues);
+        if (typeof dataOrField === 'string' || dataOrField instanceof FieldPath) {
+            this.fTransaction.update(document.ref, dataOrField, value, ...moreFieldsAndValues);
         } else {
-            const data = dataOrField as Partial<T>;
             const transformer = new ModelTransformer<T>(document.ref.path);
-            this.fTransaction.update(document.ref, transformer.toPartialData(data));
+            this.fTransaction.update(document.ref, transformer.toPartialData(dataOrField));
         }
 
         return this;
