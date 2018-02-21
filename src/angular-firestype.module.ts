@@ -4,8 +4,9 @@ import 'rxjs/add/operator/first';
 
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { AngularFirestype } from './angular-firestype.service';
-import { ModelTransformer } from './model/model-transformer';
+import { ModelToken } from './model/model-token';
 import { ModelType } from './model/model-type';
+import { ObjectOf } from './object-of';
 
 /**
  * Typed AngularFirestore. Needs to be initialiazed with AngularFirestypeModule.forRoot(model)
@@ -21,13 +22,12 @@ export class AngularFirestypeModule {
    * Initialize AngularFirestype with the model description.
    * Optionnaly enable persistance if second parameter is true.
    */
-  static forRoot(model: {[key: string]: ModelType<any>}, enablePersistence: boolean = false): ModuleWithProviders {
-    ModelTransformer.setDescriptors(model);
-
+  static forRoot(model: ObjectOf<ModelType<any>>, enablePersistence: boolean = false): ModuleWithProviders {
     return {
       ngModule: AngularFirestypeModule,
       providers: [
-        { provide: EnablePersistenceToken, useValue: enablePersistence },
+        { provide: ModelToken, useValue: model },
+        { provide: EnablePersistenceToken, useValue: enablePersistence }
       ]
     };
   }

@@ -1,33 +1,32 @@
 import { DocumentData } from '@firebase/firestore-types';
 
+import { Model } from './model';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
 
 /** Transforms a model to data and data to model for a database path */
 export class ModelTransformer<T> {
-    private static descriptors: {[key: string]: ModelType<any>} = {};
     private descriptor: ModelType<T>;
 
     constructor(private path: string = '') {
         const segments: string[] = path.split('/');
-        let current: ModelType<any> = ModelTransformer.descriptors[segments[0]];
+        let current: ModelType<any> = Model.descriptors[segments[0]];
 
-        for (let i = 2; i < segments.length; i += 2) {
+        for (let i = 0; i < segments.length; i += 2) {
             const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor<any>(current);
 
             if (modelDescriptor && modelDescriptor.subcollections && modelDescriptor.subcollections[segments[i]]) {
                 current = modelDescriptor.subcollections[segments[i]];
             } else {
-                throw new Error('Model descriptor not found for path: ' + path);
+                break;
             }
         }
 
-        this.descriptor = current;
-    }
+        if (!current) {
+            throw new Error('Model descriptor not found for path: ' + path);
+        }
 
-    /** Set the available descriptors list */
-    static setDescriptors(descriptors: {[key: string]: ModelType<any>}) {
-        ModelTransformer.descriptors = descriptors || {};
+        this.descriptor = current;
     }
 
     /** Initialize a custom object from data and model descriptor */
