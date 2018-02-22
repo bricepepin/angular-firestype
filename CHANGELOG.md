@@ -1,3 +1,13 @@
+<a name="5.1.4"></a>
+## [5.1.4](https://github.com/bricepepin/angular-firestype/compare/5.1.3...5.1.4) (2018-02-22)
+
+
+### Bug Fixes
+
+* Fix index error on model description control ([0ea3370](https://github.com/bricepepin/angular-firestype/commit/0ea3370))
+
+
+
 <a name="5.1.3"></a>
 ## [5.1.3](https://github.com/bricepepin/angular-firestype/compare/5.1.2...5.1.3) (2018-02-22)
 
