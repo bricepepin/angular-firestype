@@ -1,3 +1,13 @@
+<a name="5.1.3"></a>
+## [5.1.3](https://github.com/bricepepin/angular-firestype/compare/5.1.2...5.1.3) (2018-02-22)
+
+
+### Bug Fixes
+
+* **model:** Model descriptor not found error for subcollections ([8f12679](https://github.com/bricepepin/angular-firestype/commit/8f12679))
+
+
+
 <a name="5.1.2"></a>
 ## [5.1.2](https://github.com/bricepepin/angular-firestype/compare/5.1.1...5.1.2) (2018-02-21)
 
