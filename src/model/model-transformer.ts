@@ -18,6 +18,7 @@ export class ModelTransformer<T> {
             if (modelDescriptor && modelDescriptor.subcollections && modelDescriptor.subcollections[segments[i]]) {
                 current = modelDescriptor.subcollections[segments[i]];
             } else {
+                current = null;
                 break;
             }
         }
