@@ -12,7 +12,7 @@ export class ModelTransformer<T> {
         const segments: string[] = path.split('/');
         let current: ModelType<any> = Model.descriptors[segments[0]];
 
-        for (let i = 0; i < segments.length; i += 2) {
+        for (let i = 2; i < segments.length; i += 2) {
             const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor<any>(current);
 
             if (modelDescriptor && modelDescriptor.subcollections && modelDescriptor.subcollections[segments[i]]) {
