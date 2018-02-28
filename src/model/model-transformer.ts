@@ -1,4 +1,5 @@
 import { DocumentData } from '@firebase/firestore-types';
+import { firestore } from 'firebase/app';
 
 import { Document } from '../document/document';
 import { Model } from './model';
@@ -65,7 +66,7 @@ export class ModelTransformer<T> {
                 for (const name of Object.keys(modelDescriptor.structure)) {
                     if (data[name] !== undefined) {
                         if (modelDescriptor.structure[name] === Document) {
-                            data[name] = new Document(data[name]);
+                            data[name] = data[name] !== null ? new Document(data[name]) : null;
                         } else {
                             data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
                         }
@@ -97,15 +98,29 @@ export class ModelTransformer<T> {
             data = Object.assign({}, model);
             const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
 
-            // Objectify submodels
-            if (modelDescriptor && modelDescriptor.structure) {
-                for (const name of Object.keys(modelDescriptor.structure)) {
-                    if (data[name] !== undefined) {
-                        if (modelDescriptor.structure[name] === Document) {
-                            data[name] = data[name].ref;
-                        } else {
-                            data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+            if (modelDescriptor) {
+                // Objectify submodels
+                if (modelDescriptor.structure) {
+                    for (const name of Object.keys(modelDescriptor.structure)) {
+                        if (data[name] !== undefined) {
+                            if (modelDescriptor.structure[name] === Document) {
+                                data[name] = data[name] !== null ? data[name].ref : null;
+                            } else {
+                                data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+                            }
                         }
+                    }
+                }
+
+                // Options handling
+                const options = modelDescriptor.options;
+                if (options) {
+                    if (options.timestampOnCreate && !model[options.timestampOnCreate]) {
+                        data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
+                    }
+
+                    if (options.timestampOnUpdate) {
+                        data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
                     }
                 }
             }
