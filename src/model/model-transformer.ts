@@ -1,5 +1,6 @@
 import { DocumentData } from '@firebase/firestore-types';
 
+import { Document } from '../document/document';
 import { Model } from './model';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
@@ -24,7 +25,7 @@ export class ModelTransformer<T> {
         }
 
         if (!current) {
-            throw new Error('Model descriptor not found for path: ' + path);
+            throw new Error('Model descriptor not found for path ' + path);
         }
 
         this.descriptor = current;
@@ -63,7 +64,11 @@ export class ModelTransformer<T> {
             if (modelDescriptor && modelDescriptor.structure) {
                 for (const name of Object.keys(modelDescriptor.structure)) {
                     if (data[name] !== undefined) {
-                        data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
+                        if (modelDescriptor.structure[name] === Document) {
+                            data[name] = new Document(data[name]);
+                        } else {
+                            data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
+                        }
                     }
                 }
             }
@@ -96,7 +101,11 @@ export class ModelTransformer<T> {
             if (modelDescriptor && modelDescriptor.structure) {
                 for (const name of Object.keys(modelDescriptor.structure)) {
                     if (data[name] !== undefined) {
-                        data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+                        if (modelDescriptor.structure[name] === Document) {
+                            data[name] = data[name].ref;
+                        } else {
+                            data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+                        }
                     }
                 }
             }
