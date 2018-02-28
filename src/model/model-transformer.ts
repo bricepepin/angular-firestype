@@ -10,26 +10,8 @@ import { ModelType } from './model-type';
 export class ModelTransformer<T> {
     private descriptor: ModelType<T>;
 
-    constructor(private path: string = '') {
-        const segments: string[] = path.split('/');
-        let current: ModelType<any> = Model.descriptors[segments[0]];
-
-        for (let i = 2; i < segments.length; i += 2) {
-            const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor<any>(current);
-
-            if (modelDescriptor && modelDescriptor.subcollections && modelDescriptor.subcollections[segments[i]]) {
-                current = modelDescriptor.subcollections[segments[i]];
-            } else {
-                current = null;
-                break;
-            }
-        }
-
-        if (!current) {
-            throw new Error('Model descriptor not found for path ' + path);
-        }
-
-        this.descriptor = current;
+    constructor(private path: string) {
+        this.descriptor = Model.getModelType<T>(path);
     }
 
     /** Initialize a custom object from data and model descriptor */
@@ -47,44 +29,54 @@ export class ModelTransformer<T> {
         return this.objectify<Partial<T>>(model, this.descriptor);
     }
 
-    /** Return the modelDescriptor of a descriptor if he got one or null */
-    private getModelDescriptor<U>(descriptor: ModelType<U>): ModelDescriptor<U> {
-        return descriptor && (descriptor as ModelDescriptor<U>).type ? descriptor as ModelDescriptor<U> : null;
-    }
-
     /** Return an instanciation of the descriptor with provided data */
     private instanciate<U>(data: DocumentData, descriptor: ModelType<U>): U {
         let model: U;
 
         if (data) {
-            const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
+            const modelDescriptor: ModelDescriptor<U> = Model.getModelDescriptor<U>(descriptor);
             const constructor: new (...args: any[]) => U = modelDescriptor ? modelDescriptor.type : descriptor as new (...args: any[]) => U;
             const args: any[] = [];
 
-            // Instanciate submodels
-            if (modelDescriptor && modelDescriptor.structure) {
-                for (const name of Object.keys(modelDescriptor.structure)) {
-                    if (data[name] !== undefined) {
-                        if (modelDescriptor.structure[name] === Document) {
-                            data[name] = data[name] !== null ? new Document(data[name]) : null;
-                        } else {
-                            data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
+            if (modelDescriptor) {
+                // Instanciate submodels of a custom model
+                if (modelDescriptor.structure) {
+                    for (const name of Object.keys(modelDescriptor.structure)) {
+                        if (data[name] !== undefined) {
+                            if (modelDescriptor.structure[name] === Document) {
+                                data[name] = data[name] !== null ? new Document(data[name]) : null;
+                            } else {
+                                data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
+                            }
                         }
                     }
                 }
-            }
 
-            // Extract constructor arguments
-            if (modelDescriptor && modelDescriptor.arguments) {
-                for (const name of modelDescriptor.arguments) {
-                    args.push(data[name]);
-                    delete data[name];
+                // Instanciate elements of a collection
+                if (modelDescriptor.elements) {
+                    for (const name of Object.keys(data)) {
+                        if (data[name] !== undefined) {
+                            if (modelDescriptor.elements === Document) {
+                                data[name] = data[name] !== null ? new Document(data[name]) : null;
+                            } else {
+                                data[name] = this.instanciate<any>(data[name], modelDescriptor.elements);
+                            }
+                        }
+                    }
                 }
-            }
 
-            // Instanciate model and affect data
-            model = new constructor(...args);
-            Object.assign(model, data);
+                // Extract constructor arguments
+                if (modelDescriptor.arguments) {
+                    for (const name of modelDescriptor.arguments) {
+                        args.push(data[name]);
+                        delete data[name];
+                    }
+                }
+
+                // Instanciate model and affect data
+                model = new constructor(...args);
+                Object.assign(model, data);
+            }
         }
 
         return model;
@@ -96,7 +88,7 @@ export class ModelTransformer<T> {
 
         if (model) {
             data = Object.assign({}, model);
-            const modelDescriptor: ModelDescriptor<U> = this.getModelDescriptor<U>(descriptor);
+            const modelDescriptor: ModelDescriptor<U> = Model.getModelDescriptor<U>(descriptor);
 
             if (modelDescriptor) {
                 // Objectify submodels
@@ -107,6 +99,19 @@ export class ModelTransformer<T> {
                                 data[name] = data[name] !== null ? data[name].ref : null;
                             } else {
                                 data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
+                            }
+                        }
+                    }
+                }
+
+                // Objectify elements of a collection
+                if (modelDescriptor.elements) {
+                    for (const name of Object.keys(data)) {
+                        if (data[name] !== undefined) {
+                            if (modelDescriptor.elements === Document) {
+                                data[name] = data[name] !== null ? data[name].ref : null;
+                            } else {
+                                data[name] = this.objectify<any>(data[name], modelDescriptor.elements);
                             }
                         }
                     }

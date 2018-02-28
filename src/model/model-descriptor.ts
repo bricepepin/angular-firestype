@@ -17,10 +17,15 @@ export interface ModelDescriptor<T> {
     arguments?: (keyof T)[];
 
     /**
-     * Map defining the structure of the model. All custom types contained in this object and their subobjects needs
-     * to be added to allow proper model transformation
+     * Map of types defining the structure of the model.
+     * All custom types contained in this object and their subobjects needs to be added to allow proper model transformation.
      */
     structure?: {[P in keyof T]: ModelType<any>};
+
+    /**
+     * If the model is a collection, define the type of its elements.
+     */
+    elements?: ModelType<any>;
 
     /** Map of model's subcollections that need to be instanciated */
     subcollections?: {[P in keyof T]: ModelType<any>};

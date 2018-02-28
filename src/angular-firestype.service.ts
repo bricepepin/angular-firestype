@@ -21,7 +21,7 @@ export class AngularFirestype extends AngularFirestore {
   constructor(public app: FirebaseApp, @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
       @Inject(ModelToken) model: ObjectOf<ModelType<any>>) {
     super(app, shouldEnablePersistence);
-    Model.descriptors = model;
+    Model.types = model;
   }
 
   /**
