@@ -34,12 +34,18 @@ export class Model {
     static getModelDescriptor<T>(descriptor: ModelType<T>): ModelDescriptor<T> {
         const modelDescriptor = descriptor && (descriptor as ModelDescriptor<T>).type ? descriptor as ModelDescriptor<T> : null;
 
-        if (modelDescriptor.structure && modelDescriptor.elements) {
+        if (modelDescriptor && modelDescriptor.structure && modelDescriptor.elements) {
             throw new Error('A model descriptor cannot have both \'structure\' and \'elements\' attributes. '
             + '\'structure\' is for custom object definition and \'elements\' is used to define elements types of a collection. '
             + 'Model: ' + JSON.stringify(descriptor));
         }
 
         return modelDescriptor;
+    }
+
+    /** Return the type of a modelType */
+    static getType<T>(modelType: ModelType<T>): new (...args: any[]) => T {
+        const modelDescriptor = this.getModelDescriptor<T>(modelType);
+        return modelDescriptor ? modelDescriptor.type : modelType as new (...args: any[]) => T;
     }
 }

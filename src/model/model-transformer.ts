@@ -35,7 +35,7 @@ export class ModelTransformer<T> {
 
         if (data) {
             const modelDescriptor: ModelDescriptor<U> = Model.getModelDescriptor<U>(descriptor);
-            const constructor: new (...args: any[]) => U = modelDescriptor ? modelDescriptor.type : descriptor as new (...args: any[]) => U;
+            const constructor: new (...args: any[]) => U = Model.getType<U>(descriptor);
             const args: any[] = [];
 
             if (modelDescriptor) {
@@ -43,20 +43,17 @@ export class ModelTransformer<T> {
                 if (modelDescriptor.structure) {
                     for (const name of Object.keys(modelDescriptor.structure)) {
                         if (data[name] !== undefined) {
-                            if (modelDescriptor.structure[name] === Document) {
+                            if (Model.getType(modelDescriptor.structure[name]) === Document) {
                                 data[name] = data[name] !== null ? new Document(data[name]) : null;
                             } else {
                                 data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
                             }
                         }
                     }
-                }
-
-                // Instanciate elements of a collection
-                if (modelDescriptor.elements) {
+                } else if (modelDescriptor.elements) {     // Instanciate elements of a collection
                     for (const name of Object.keys(data)) {
                         if (data[name] !== undefined) {
-                            if (modelDescriptor.elements === Document) {
+                            if (Model.getType(modelDescriptor.elements) === Document) {
                                 data[name] = data[name] !== null ? new Document(data[name]) : null;
                             } else {
                                 data[name] = this.instanciate<any>(data[name], modelDescriptor.elements);
@@ -102,10 +99,7 @@ export class ModelTransformer<T> {
                             }
                         }
                     }
-                }
-
-                // Objectify elements of a collection
-                if (modelDescriptor.elements) {
+                } else if (modelDescriptor.elements) {    // Objectify elements of a collection
                     for (const name of Object.keys(data)) {
                         if (data[name] !== undefined) {
                             if (modelDescriptor.elements === Document) {
