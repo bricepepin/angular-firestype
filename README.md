@@ -33,7 +33,7 @@ import { Message } from './message.ts';
 const model: {[key: string]: ModelType<any>} = {
   users: {
     type: User,
-    arguments: ['username', 'image'],
+    arguments: ['username', 'picture'],
     structure: {
       adress: Address
     },
@@ -101,12 +101,16 @@ const model: {[key: string]: ModelType<any>} = {    // {[key: string]: ModelType
   messages: Message,
   users: {
     type: User,
-    arguments: ['username', 'image'],
+    arguments: ['username', 'picture'],
     structure: {
       address: Address
     },
     subcollections: {
       messages: Message
+    },
+    options: {
+      timestampOnCreate: 'createdAt',
+      timestampOnUpdate: 'updatedAt'
     }
   }
 };
@@ -121,14 +125,16 @@ The mapping object `model` has two entries `messages` and `users`. They both rep
  The constructor needs to be idempotent to work properly.
 - `arguments` : array of arguments names to send to the constructor.
  If this attribute is defined, the constructor will be called with the values of the arguments names *in order*.
- For exemple, documents of the collection `users` will be instanciated this way : `new User(valueOfUsername, valueOfImage)`.
+ For exemple, documents of the collection `users` will be instanciated this way : `new User(valueOfUsername, valueOfPicture)`.
  If not defined, the constructor is called without arguments, like `new Message()`.
  AngularFirestype only handle object's attributes as constructor arguments. Other ones need to be optional.
 - `structure` : map of `ModelType`. This is the internal object description. AngularFirestype only needs to know about instanciated types and automatically handle basic types.
  In the case of `users`, the `structure` attribute is saying that the class `User` has a custom type `Address` as attribute `address`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested custom types.
+- `elements` : `ModelType` defining the custom type for elements contained in a collection. A  `ModelDescriptor` can't have both `structure` and `elements` defined, as it represents either a custom object or a collection or custom objects.
 - `subcollections` : map of `ModelType`. Map of the collection subcollections and their corresponding custom types.
  Works the same as `structure` but for collections instead of objects.
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
+ - `options` : Additional options for this `ModelDescriptor`. There is currently two options available: `timestampOnCreate` and `timestampOnUpdate`. On the exemple above, a server timestamp will be added on the attribute `createdAt` on user creation, and on the attribute `updatedAt` on user update.
 
 AngularFiretype add some model checking : you cannot add a document to a collection not defined in your mapping object. If you try to do so, you'll get the following error: *Model descriptor not found for path: your/current/path*
 

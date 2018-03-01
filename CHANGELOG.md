@@ -1,3 +1,15 @@
+<a name="5.2.0"></a>
+# [5.2.0](https://github.com/bricepepin/angular-firestype/compare/5.1.4...5.2.0) (2018-03-01)
+
+
+### Features
+
+* **model:** Add collections management via the 'elements' attribute in ModelType ([7fad214](https://github.com/bricepepin/angular-firestype/commit/7fad214))
+* **model:** Add options to ModelDescriptor with first options timestampOnCreate and timestampOnUpdate ([c3f167b](https://github.com/bricepepin/angular-firestype/commit/c3f167b))
+* **model:** Handle AngularFirestype Document as DocumentReference when specified in model structure ([13f6001](https://github.com/bricepepin/angular-firestype/commit/13f6001))
+
+
+
 <a name="5.1.4"></a>
 ## [5.1.4](https://github.com/bricepepin/angular-firestype/compare/5.1.3...5.1.4) (2018-02-22)
 
