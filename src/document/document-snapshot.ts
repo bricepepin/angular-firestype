@@ -1,10 +1,11 @@
 import { DocumentData, DocumentSnapshot } from '@firebase/firestore-types';
+import { Document } from './document';
 
 /** A typed Document Snapshot */
-export interface DocumentSnapshot extends DocumentSnapshot {
-    /** Get typed data from this document */
-    data(): any;
+export interface DocumentSnapshot<T> extends DocumentSnapshot {
+    /** Get the Document reference corresponding to this snapshot */
+    document(): Document<T>;
 
-    /** Retrieves all fields of the document as an Object */
-    rawData(): DocumentData;
+    /** Get the custom object from the data of this document */
+    model(): T;
 }

@@ -41,8 +41,7 @@ export class AngularFirestype extends AngularFirestore {
    * This collection handle the type transformation accept custom objects and return them initialiazed.
    */
   doc<T>(path: string): Document<T> {
-    const ref: DocumentReference = this.firestore.doc(path);
-    return new Document<T>(ref);
+    return new Document<T>(this.firestore.doc(path));
   }
 
   /**

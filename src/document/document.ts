@@ -7,11 +7,11 @@ import { Collection } from '../collection/collection';
 import { DocumentSnapshot } from './document-snapshot';
 
 /** Return a typed DocumentSnapshot from a generic one and a transformer */
-export function typeDocumentSnapshot<T>(fDocumentSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>): DocumentSnapshot {
-    const documentSnapshot = fDocumentSnapshot as DocumentSnapshot;
-    documentSnapshot.rawData = documentSnapshot.data;
-    documentSnapshot.data = () => transformer.toModel(documentSnapshot.rawData());
-    return documentSnapshot;
+export function typeDocumentSnapshot<T>(fSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>): DocumentSnapshot<T> {
+    const snapshot = fSnapshot as DocumentSnapshot<T>;
+    snapshot.document = () => new Document<T>(snapshot.ref);
+    snapshot.model = () => transformer.toModel(snapshot.data());
+    return snapshot;
 }
 
 /** Typed document */
@@ -41,10 +41,10 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     }
 
     /** Listen to snapshot updates from the document. */
-    snapshotChanges(): Observable<Action<DocumentSnapshot>> {
+    snapshotChanges(): Observable<Action<DocumentSnapshot<T>>> {
         return super.snapshotChanges().map(action => {
             typeDocumentSnapshot<T>(action.payload, this.transformer);
-            return action as Action<DocumentSnapshot>;
+            return action as Action<DocumentSnapshot<T>>;
         });
     }
 
@@ -53,14 +53,14 @@ export class Document<T> extends AngularFirestoreDocument<T> {
      * The unsubscribe process is done automatically.
      */
     current(value?: (model: T) => void, error?: (error: any) => void, complete?: () => void) {
-        this.valueChanges().first().subscribe(value);
+        this.valueChanges().first().subscribe(value, error, complete);
     }
 
     /**
      * Return current snapshot of the document, without updates afterwards.
      * The unsubscribe process is done automatically.
      */
-    currentSnapshot(value?: (snapshot: Action<DocumentSnapshot>) => void, error?: (error: any) => void, complete?: () => void) {
-        this.snapshotChanges().first().subscribe(value);
+    currentSnapshot(value?: (snapshot: Action<DocumentSnapshot<T>>) => void, error?: (error: any) => void, complete?: () => void) {
+        this.snapshotChanges().first().subscribe(value, error, complete);
     }
 }

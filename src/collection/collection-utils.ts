@@ -19,11 +19,11 @@ export namespace CollectionUtils {
                     }
 
                     transaction.set(newDocument, data);
-                    resolve();
+                    resolve(data);
                 });
             }
 
-            return value ? moveData(value) : transaction.get(oldDocument).then(snapshot => moveData(snapshot.data()));
+            return value ? moveData(value) : transaction.get(oldDocument).then(snapshot => moveData(snapshot.model()));
         };
     }
 }

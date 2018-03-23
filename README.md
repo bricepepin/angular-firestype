@@ -4,7 +4,7 @@
 Type handling for AngularFirestore
 
 This module extends AngularFirestore with type handling.
-Using a mapping object, it can add custom objects and get instanciated data from Firestore without additional steps.
+Using a mapping object, it can add custom objects and get instancied data from Firestore without additional steps.
 
 ## Install
 ```bash
@@ -121,14 +121,14 @@ The mapping object `model` has two entries `messages` and `users`. They both rep
 - `users` is a more complex one and needs to be described as a `ModelDescriptor`.
 
  `ModelDescriptor` has the following attributes :
-- `type` : class that will be instanciated for this collection (`User` for `users` collection).
+- `type` : class that will be instancied for this collection (`User` for `users` collection).
  The constructor needs to be idempotent to work properly.
 - `arguments` : array of arguments names to send to the constructor.
  If this attribute is defined, the constructor will be called with the values of the arguments names *in order*.
- For exemple, documents of the collection `users` will be instanciated this way : `new User(valueOfUsername, valueOfPicture)`.
+ For exemple, documents of the collection `users` will be instancied this way : `new User(valueOfUsername, valueOfPicture)`.
  If not defined, the constructor is called without arguments, like `new Message()`.
  AngularFirestype only handle object's attributes as constructor arguments. Other ones need to be optional.
-- `structure` : map of `ModelType`. This is the internal object description. AngularFirestype only needs to know about instanciated types and automatically handle basic types.
+- `structure` : map of `ModelType`. This is the internal object description. AngularFirestype only needs to know about instancied types and automatically handle basic types.
  In the case of `users`, the `structure` attribute is saying that the class `User` has a custom type `Address` as attribute `address`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested custom types.
 - `elements` : `ModelType` defining the custom type for elements contained in a collection. A  `ModelDescriptor` can't have both `structure` and `elements` defined, as it represents either a custom object or a collection of custom objects.
 - `subcollections` : map of `ModelType`. Map of the collection subcollections and their corresponding custom types.
@@ -144,9 +144,9 @@ AngularFirestype presents a few differences with AngularFirestore :
     This is used to pass the mapping object to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
 - You cannot add a document to a collection not defined in AngularFiretype's model mapping.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
-    They work with custom types, inferred from the collection path and the mapping object.
+    They work with custom types, inferred from the collection path and the mapping object. They also have some helpers method like `current()` or `first()`.
 - `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction` and `Transaction` have been redefined to work with custom types.
-- `DocumentSnapshot` has a new `rawData()` method allowing to get the data as AngularFirestore would, without instanciation.
+- `DocumentSnapshot` has a new `model()` method allowing to get the instancied custom object without additional steps, and `document()` to get a `Document` reference.
 
 ## Contribution
 Any contribution is appreciated : simply use AngularFirestype, talk about it, give some feedback or even develop something. And if you feel like it, you can support me through Paypal :

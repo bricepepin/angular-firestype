@@ -19,10 +19,10 @@ export class Transaction {
      * @param document The document to be read.
      * @return A DocumentSnapshot for the read data.
      */
-    get<T>(document: Document<T>): Promise<DocumentSnapshot> {
+    get<T>(document: Document<T>): Promise<DocumentSnapshot<T>> {
         const transformer = new ModelTransformer<T>(document.ref.path);
 
-        return new Promise<DocumentSnapshot>((resolve, reject) => {
+        return new Promise<DocumentSnapshot<T>>((resolve, reject) => {
             this.fTransaction.get(document.ref)
                 .then(documentSnapshot => resolve(typeDocumentSnapshot<T>(documentSnapshot, transformer)));
         });

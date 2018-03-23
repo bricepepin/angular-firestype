@@ -27,7 +27,7 @@ export interface ModelDescriptor<T> {
      */
     elements?: ModelType<any>;
 
-    /** Map of model's subcollections that need to be instanciated */
+    /** Map of model's subcollections that need to be instancied */
     subcollections?: {[P in keyof T]: ModelType<any>};
 
     /** List of options */
