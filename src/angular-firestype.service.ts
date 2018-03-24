@@ -1,5 +1,5 @@
 import { Injectable, Optional, Inject } from '@angular/core';
-import { DocumentReference } from '@firebase/firestore-types';
+import { DocumentReference, CollectionReference } from '@firebase/firestore-types';
 import { FirebaseApp } from 'angularfire2';
 import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
 
@@ -11,6 +11,7 @@ import { ModelToken } from './model/model-token';
 import { ModelType } from './model/model-type';
 import { ObjectOf } from './object-of';
 import { Transaction } from './transaction/transaction';
+import { Query } from './collection/query';
 
 /**
  * Type handling for AngularFirestore
@@ -29,9 +30,9 @@ export class AngularFirestype extends AngularFirestore {
    * This collection handle the type transformation accept custom objects and return them initialiazed.
    */
   collection<T>(path: string, queryFn?: QueryFn): Collection<T> {
-    const collectionRef = this.firestore.collection(path);
-    const { ref, query } = associateQuery(collectionRef, queryFn);
-    return new Collection<T>(ref, query);
+    const ref = this.firestore.collection(path);
+    const queryBuilder = queryFn as any;
+    return new Collection<T>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref);
   }
 
   /**

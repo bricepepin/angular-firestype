@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { ModelTransformer } from '../model/model-transformer';
 import { Collection } from '../collection/collection';
 import { DocumentSnapshot } from './document-snapshot';
+import { Query } from '../collection/query';
 
 /** Return a typed DocumentSnapshot from a generic one and a transformer */
 export function typeDocumentSnapshot<T>(fSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>): DocumentSnapshot<T> {
@@ -35,9 +36,9 @@ export class Document<T> extends AngularFirestoreDocument<T> {
 
     /** Create a reference to a sub-collection given a path and an optional query function. */
     collection<U>(path: string, queryFn?: QueryFn): Collection<U> {
-        const collectionRef = this.ref.collection(path);
-        const { ref, query } = associateQuery(collectionRef, queryFn);
-        return new Collection<U>(ref, query);
+        const ref = this.ref.collection(path);
+        const queryBuilder = queryFn as any;
+        return new Collection<U>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref);
     }
 
     /** Listen to snapshot updates from the document. */

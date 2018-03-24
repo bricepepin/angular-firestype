@@ -9,8 +9,8 @@ import { DocumentChangeAction } from '../document/document-change-action';
 export class Collection<T> extends AngularFirestoreCollection<T> {
   private transformer: ModelTransformer<T>;
 
-  constructor(public readonly ref: CollectionReference, private readonly collectionQuery: Query) {
-    super(ref, collectionQuery);
+  constructor(ref: CollectionReference, query: Query) {
+    super(ref, query);
     this.transformer = new ModelTransformer<T>(this.ref.path);
   }
 
@@ -102,7 +102,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
 
   /**
    * Cast generic actions to typed ones
-   * @param actions : array of action to cast
+   * @param actions : array of actions to cast
    */
   private toTypedActions(actions: FDocumentChangeAction[]): DocumentChangeAction<T>[] {
     for (const element of actions) {
