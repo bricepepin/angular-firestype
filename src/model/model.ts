@@ -2,10 +2,15 @@ import { InjectionToken } from '@angular/core';
 import { ObjectOf } from '../object-of';
 import { ModelType } from './model-type';
 import { ModelDescriptor } from './model-descriptor';
+import { FirebaseFirestore } from '@firebase/firestore-types';
 
-/** Model definition */
+/**
+ * Model definition.
+ * This class needs types and firestore initialisation before use.
+ */
 export class Model {
     static types: ObjectOf<ModelType<any>> = {};
+    static firestore: FirebaseFirestore = null;
 
     /** Return the modelType matching provided path */
     static getModelType<T>(path: string = ''): ModelType<T> {

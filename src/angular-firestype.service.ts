@@ -23,6 +23,7 @@ export class AngularFirestype extends AngularFirestore {
       @Inject(ModelToken) model: ObjectOf<ModelType<any>>) {
     super(app, shouldEnablePersistence);
     Model.types = model;
+    Model.firestore = app.firestore();
   }
 
   /**

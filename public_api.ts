@@ -8,5 +8,7 @@ export { DocumentChangeAction } from './src/document/document-change-action';
 export { DocumentSnapshot } from './src/document/document-snapshot';
 export { Transaction } from './src/transaction/transaction';
 
+export { Model } from './src/model/model';
 export { ModelDescriptor } from './src/model/model-descriptor';
+export { ModelTransformer } from './src/model/model-transformer';
 export { ModelType } from './src/model/model-type';

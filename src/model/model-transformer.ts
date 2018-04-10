@@ -10,7 +10,7 @@ import { ModelType } from './model-type';
 export class ModelTransformer<T> {
     private descriptor: ModelType<T>;
 
-    constructor(private path: string) {
+    constructor(path: string, private refAsPath = false) {
         this.descriptor = Model.getModelType<T>(path);
     }
 
@@ -43,8 +43,8 @@ export class ModelTransformer<T> {
                 if (modelDescriptor.structure) {
                     for (const name of Object.keys(modelDescriptor.structure)) {
                         if (data[name] !== undefined) {
-                            if (Model.getType(modelDescriptor.structure[name]) === Document) {
-                                data[name] = data[name] !== null ? new Document(data[name]) : null;
+                            if (data[name] && Model.getType(modelDescriptor.structure[name]) === Document) {
+                                data[name] = new Document(this.refAsPath ? Model.firestore.doc(data[name]) : data[name]);
                             } else {
                                 data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
                             }
@@ -53,8 +53,8 @@ export class ModelTransformer<T> {
                 } else if (modelDescriptor.elements) {     // Instanciate elements of a collection
                     for (const name of Object.keys(data)) {
                         if (data[name] !== undefined) {
-                            if (Model.getType(modelDescriptor.elements) === Document) {
-                                data[name] = data[name] !== null ? new Document(data[name]) : null;
+                            if (data[name] && Model.getType(modelDescriptor.elements) === Document) {
+                                data[name] = new Document(this.refAsPath ? Model.firestore.doc(data[name]) : data[name]);
                             } else {
                                 data[name] = this.instanciate<any>(data[name], modelDescriptor.elements);
                             }
@@ -92,8 +92,8 @@ export class ModelTransformer<T> {
                 if (modelDescriptor.structure) {
                     for (const name of Object.keys(modelDescriptor.structure)) {
                         if (data[name] !== undefined) {
-                            if (modelDescriptor.structure[name] === Document) {
-                                data[name] = data[name] !== null ? data[name].ref : null;
+                            if (data[name] && modelDescriptor.structure[name] === Document) {
+                                data[name] = this.refAsPath ? data[name].ref.path : data[name].ref;
                             } else {
                                 data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
                             }
@@ -102,8 +102,8 @@ export class ModelTransformer<T> {
                 } else if (modelDescriptor.elements) {    // Objectify elements of a collection
                     for (const name of Object.keys(data)) {
                         if (data[name] !== undefined) {
-                            if (modelDescriptor.elements === Document) {
-                                data[name] = data[name] !== null ? data[name].ref : null;
+                            if (data[name] && modelDescriptor.elements === Document) {
+                                data[name] = this.refAsPath ? data[name].ref.path : data[name].ref;
                             } else {
                                 data[name] = this.objectify<any>(data[name], modelDescriptor.elements);
                             }

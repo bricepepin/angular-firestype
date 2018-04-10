@@ -19,7 +19,7 @@ export function typeDocumentSnapshot<T>(fSnapshot: FDocumentSnapshot, transforme
 export class Document<T> extends AngularFirestoreDocument<T> {
     private transformer: ModelTransformer<T>;
 
-    constructor(public ref: DocumentReference) {
+    constructor(ref: DocumentReference) {
         super(ref);
         this.transformer = new ModelTransformer<T>(this.ref.path);
     }
