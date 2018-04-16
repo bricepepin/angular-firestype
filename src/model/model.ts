@@ -14,7 +14,7 @@ export class Model {
 
     /** Return the modelType matching provided path */
     static getModelType<T>(path: string = ''): ModelType<T> {
-        const segments: string[] = path.split('/');
+        const segments: string[] = path.replace(/^\//, '').split('/');
         let current: ModelType<T> = this.types[segments[0]];
 
         for (let i = 2; i < segments.length; i += 2) {

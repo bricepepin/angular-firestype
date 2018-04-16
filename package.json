@@ -25,7 +25,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng-packagr -p ng-package.json",
+    "build": "ng-packagr",
     "test": "ng test",
     "lint": "ng lint",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
