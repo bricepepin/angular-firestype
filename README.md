@@ -134,7 +134,7 @@ The mapping object `model` has two entries `messages` and `users`. They both rep
 - `subcollections` : map of `ModelType`. Map of the collection subcollections and their corresponding custom types.
  Works the same as `structure` but for collections instead of objects.
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
- - `options` : Additional options for this `ModelDescriptor`. There is currently two options available: `timestampOnCreate` and `timestampOnUpdate`. On the exemple above, a server timestamp will be added on the attribute `createdAt` on user creation, and on the attribute `updatedAt` on user update.
+ - `options` : Additional options for this `ModelDescriptor`. Options implements interface `ModelOptions`.
 
 AngularFiretype add some model checking : you cannot add a document to a collection not defined in your mapping object. If you try to do so, you'll get the following error: *Model descriptor not found for path: your/current/path*
 

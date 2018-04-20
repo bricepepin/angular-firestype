@@ -1,4 +1,5 @@
 import { ModelType } from './model-type';
+import { ModelOptions } from './model-options';
 
 /* Informations about a model used to normalize and denormalize data */
 export interface ModelDescriptor<T> {
@@ -31,13 +32,5 @@ export interface ModelDescriptor<T> {
     subcollections?: {[P in keyof T]: ModelType<any>};
 
     /** List of options */
-    options?: {
-        /**
-         * Add server timestamp on creation for provided attribute.
-         * Warning: if updated without creation timestamp provided, will override it.
-         */
-        timestampOnCreate?: keyof T,
-        /** Add server timestamp on update for provided attribute */
-        timestampOnUpdate?: keyof T
-    };
+    options?: ModelOptions<T>;
 }

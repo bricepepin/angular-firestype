@@ -10,5 +10,6 @@ export { DocumentSnapshot } from './src/document/document-snapshot';
 export { Transaction } from './src/transaction/transaction';
 
 export { ModelDescriptor } from './src/model/model-descriptor';
+export { ModelOptions } from './src/model/model-options';
 export { ModelTransformer } from './src/model/model-transformer';
 export { ModelType } from './src/model/model-type';

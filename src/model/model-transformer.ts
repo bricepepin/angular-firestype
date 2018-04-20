@@ -4,12 +4,13 @@ import { Options } from '../options';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
 import { ModelUtils } from './model-utils';
+import { ModelOptions } from './model-options';
 
 /** Transforms a model to data and data to model for a database path */
 export class ModelTransformer<T> {
     private descriptor: ModelType<T>;
 
-    constructor(path: string, private refAsPath = false) {
+    constructor(path: string, private options: ModelOptions<T> = {}) {
         this.descriptor = ModelUtils.getModelType<T>(path);
     }
 
@@ -43,7 +44,7 @@ export class ModelTransformer<T> {
                     for (const name of Object.keys(modelDescriptor.structure)) {
                         if (data[name] !== undefined) {
                             if (data[name] && ModelUtils.getType(modelDescriptor.structure[name]) === Document) {
-                                data[name] = new Document(this.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
+                                data[name] = new Document(this.options.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
                             } else {
                                 data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
                             }
@@ -53,7 +54,7 @@ export class ModelTransformer<T> {
                     for (const name of Object.keys(data)) {
                         if (data[name] !== undefined) {
                             if (data[name] && ModelUtils.getType(modelDescriptor.elements) === Document) {
-                                data[name] = new Document(this.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
+                                data[name] = new Document(this.options.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
                             } else {
                                 data[name] = this.instanciate<any>(data[name], modelDescriptor.elements);
                             }
@@ -87,12 +88,14 @@ export class ModelTransformer<T> {
             const modelDescriptor: ModelDescriptor<U> = ModelUtils.getModelDescriptor<U>(descriptor);
 
             if (modelDescriptor) {
+                const options = Object.assign(modelDescriptor.options || {}, this.options);
+
                 // Objectify submodels
                 if (modelDescriptor.structure) {
                     for (const name of Object.keys(modelDescriptor.structure)) {
                         if (data[name] !== undefined) {
                             if (data[name] && modelDescriptor.structure[name] === Document) {
-                                data[name] = this.refAsPath ? data[name].ref.path : data[name].ref;
+                                data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
                             } else {
                                 data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
                             }
@@ -102,7 +105,7 @@ export class ModelTransformer<T> {
                     for (const name of Object.keys(data)) {
                         if (data[name] !== undefined) {
                             if (data[name] && modelDescriptor.elements === Document) {
-                                data[name] = this.refAsPath ? data[name].ref.path : data[name].ref;
+                                data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
                             } else {
                                 data[name] = this.objectify<any>(data[name], modelDescriptor.elements);
                             }
@@ -111,15 +114,12 @@ export class ModelTransformer<T> {
                 }
 
                 // Options handling
-                const options = modelDescriptor.options;
-                if (options) {
-                    if (options.timestampOnCreate && !model[options.timestampOnCreate]) {
-                        data[options.timestampOnCreate] = Options.firestoreStatic.FieldValue.serverTimestamp() as any;
-                    }
+                if (options.timestampOnCreate && !model[options.timestampOnCreate]) {
+                    data[options.timestampOnCreate] = Options.firestoreStatic.FieldValue.serverTimestamp() as any;
+                }
 
-                    if (options.timestampOnUpdate) {
-                        data[options.timestampOnUpdate] = Options.firestoreStatic.FieldValue.serverTimestamp() as any;
-                    }
+                if (options.timestampOnUpdate) {
+                    data[options.timestampOnUpdate] = Options.firestoreStatic.FieldValue.serverTimestamp() as any;
                 }
             }
         }
