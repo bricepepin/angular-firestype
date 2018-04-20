@@ -1,21 +1,19 @@
-import { InjectionToken } from '@angular/core';
+import { FirebaseFirestore } from '@firebase/firestore-types';
+import { firestore } from 'firebase/app';
+import { Options } from '../options';
 import { ObjectOf } from '../object-of';
 import { ModelType } from './model-type';
 import { ModelDescriptor } from './model-descriptor';
-import { FirebaseFirestore } from '@firebase/firestore-types';
 
 /**
  * Model definition.
  * This class needs types and firestore initialisation before use.
  */
-export class Model {
-    static types: ObjectOf<ModelType<any>> = {};
-    static firestore: FirebaseFirestore = null;
-
+export class ModelUtils {
     /** Return the modelType matching provided path */
     static getModelType<T>(path: string = ''): ModelType<T> {
         const segments: string[] = path.replace(/^\//, '').split('/');
-        let current: ModelType<T> = this.types[segments[0]];
+        let current: ModelType<T> = Options.model()[segments[0]];
 
         for (let i = 2; i < segments.length; i += 2) {
             const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor(current);

@@ -6,12 +6,12 @@ import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestor
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
-import { Model } from './model/model';
 import { ModelToken } from './model/model-token';
 import { ModelType } from './model/model-type';
 import { ObjectOf } from './object-of';
 import { Transaction } from './transaction/transaction';
 import { Query } from './collection/query';
+import { Options } from './options';
 
 /**
  * Type handling for AngularFirestore
@@ -22,8 +22,8 @@ export class AngularFirestype extends AngularFirestore {
   constructor(public app: FirebaseApp, @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
       @Inject(ModelToken) model: ObjectOf<ModelType<any>>) {
     super(app, shouldEnablePersistence);
-    Model.types = model;
-    Model.firestore = app.firestore();
+    Options.setModel(model);
+    Options.setFirestore(this.firestore);
   }
 
   /**

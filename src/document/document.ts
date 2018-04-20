@@ -17,10 +17,12 @@ export function typeDocumentSnapshot<T>(fSnapshot: FDocumentSnapshot, transforme
 
 /** Typed document */
 export class Document<T> extends AngularFirestoreDocument<T> {
+    readonly id: string;
     private transformer: ModelTransformer<T>;
 
     constructor(ref: DocumentReference) {
         super(ref);
+        this.id = ref.id;
         this.transformer = new ModelTransformer<T>(this.ref.path);
     }
 
