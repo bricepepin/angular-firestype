@@ -1,6 +1,5 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { AngularFireModule } from 'angularfire2';
-import 'rxjs/add/operator/first';
 
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { AngularFirestype } from './angular-firestype.service';

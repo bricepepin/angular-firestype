@@ -1,6 +1,7 @@
 import { DocumentReference, DocumentSnapshot as FDocumentSnapshot, SetOptions } from '@firebase/firestore-types';
 import { AngularFirestoreDocument, associateQuery, QueryFn, Action } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ModelTransformer } from '../model/model-transformer';
 import { Collection } from '../collection/collection';
@@ -56,7 +57,7 @@ export class Document<T> extends AngularFirestoreDocument<T> {
      * The unsubscribe process is done automatically.
      */
     current(value?: (model: T) => void, error?: (error: any) => void, complete?: () => void) {
-        this.valueChanges().first().subscribe(value, error, complete);
+        this.valueChanges().pipe(first()).subscribe(value, error, complete);
     }
 
     /**
@@ -64,6 +65,6 @@ export class Document<T> extends AngularFirestoreDocument<T> {
      * The unsubscribe process is done automatically.
      */
     currentSnapshot(value?: (snapshot: Action<DocumentSnapshot<T>>) => void, error?: (error: any) => void, complete?: () => void) {
-        this.snapshotChanges().first().subscribe(value, error, complete);
+        this.snapshotChanges().pipe(first()).subscribe(value, error, complete);
     }
 }
