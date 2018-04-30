@@ -42,23 +42,11 @@ export class ModelTransformer<T> {
                 // Instanciate submodels of a custom model
                 if (modelDescriptor.structure) {
                     for (const name of Object.keys(modelDescriptor.structure)) {
-                        if (data[name] !== undefined) {
-                            if (data[name] && ModelUtils.getType(modelDescriptor.structure[name]) === Document) {
-                                data[name] = new Document(this.options.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
-                            } else {
-                                data[name] = this.instanciate<any>(data[name], modelDescriptor.structure[name]);
-                            }
-                        }
+                        this.instanciateField(data, name, modelDescriptor.structure[name]);
                     }
                 } else if (modelDescriptor.elements) {     // Instanciate elements of a collection
                     for (const name of Object.keys(data)) {
-                        if (data[name] !== undefined) {
-                            if (data[name] && ModelUtils.getType(modelDescriptor.elements) === Document) {
-                                data[name] = new Document(this.options.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
-                            } else {
-                                data[name] = this.instanciate<any>(data[name], modelDescriptor.elements);
-                            }
-                        }
+                        this.instanciateField(data, name, modelDescriptor.elements);
                     }
                 }
 
@@ -79,6 +67,17 @@ export class ModelTransformer<T> {
         return model;
     }
 
+    /** Instanciate data[name] using modelType information */
+    private instanciateField(data: DocumentData, name: string, modelType: ModelType<any>): any {
+        if (data[name] !== undefined && data[name] !== null) {
+            if (ModelUtils.getType(modelType) === Document) {
+                data[name] = new Document(this.options.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
+            } else {
+                data[name] = this.instanciate(data[name], modelType);
+            }
+        }
+    }
+
     /** Return an object from a custom type using a descriptor */
     private objectify<U>(model: U, descriptor: ModelType<U>): U {
         let data: U;
@@ -93,23 +92,11 @@ export class ModelTransformer<T> {
                 // Objectify submodels
                 if (modelDescriptor.structure) {
                     for (const name of Object.keys(modelDescriptor.structure)) {
-                        if (data[name] !== undefined) {
-                            if (data[name] && modelDescriptor.structure[name] === Document) {
-                                data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
-                            } else {
-                                data[name] = this.objectify<any>(data[name], modelDescriptor.structure[name]);
-                            }
-                        }
+                        this.objectifyField(data, name, modelDescriptor.structure[name]);
                     }
                 } else if (modelDescriptor.elements) {    // Objectify elements of a collection
                     for (const name of Object.keys(data)) {
-                        if (data[name] !== undefined) {
-                            if (data[name] && modelDescriptor.elements === Document) {
-                                data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
-                            } else {
-                                data[name] = this.objectify<any>(data[name], modelDescriptor.elements);
-                            }
-                        }
+                        this.objectifyField(data, name, modelDescriptor.elements);
                     }
                 }
 
@@ -125,5 +112,16 @@ export class ModelTransformer<T> {
         }
 
         return data;
+    }
+
+    /** Objectify data[name] using modelType information */
+    private objectifyField(data: DocumentData, name: string, modelType: ModelType<any>): any {
+        if (data[name] !== undefined && data[name] !== null) {
+            if (ModelUtils.getType(modelType) === Document) {
+                data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
+            } else {
+                data[name] = this.objectify(data[name], modelType);
+            }
+        }
     }
 }
