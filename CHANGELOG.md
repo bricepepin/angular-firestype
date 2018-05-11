@@ -1,3 +1,28 @@
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/bricepepin/angular-firestype/compare/6.0.0-rc.0...6.0.0) (2018-05-11)
+
+
+### Features
+
+* Upgrade to Angular 6.0.0 and AngularFire2 5.0.0-rc.7 ([43ad7be](https://github.com/bricepepin/angular-firestype/commit/43ad7be))
+
+* **angular:** Upgrade to Angular 6-rc and rxjs 6. Now requires rxjs-compat@^6.0.0 until angularfire2 upgrade to rxjs 6. ([d970d5b](https://github.com/bricepepin/angular-firestype/commit/d970d5b))
+* **collection:** Add the possibility to pass Document<T> reference to collection queries ([faf240f](https://github.com/bricepepin/angular-firestype/commit/faf240f))
+* **Collection:** Add helpers methods addDocument(), document(), first() and firstSnapshot(). ([f041363](https://github.com/bricepepin/angular-firestype/commit/f041363))
+* **model:** Add Model and ModelTransformer to public API to allow model transformation outside of firestype service ([e94584d](https://github.com/bricepepin/angular-firestype/commit/e94584d))
+* **transformer:** Handle collections starting with a slash ([67168c3](https://github.com/bricepepin/angular-firestype/commit/67168c3))
+
+### BREAKING CHANGES
+
+* **Collection:** Improve typings for better typescript support
+
+Add model types on classes DocumentChange<T>, DocumentChangeAction<T> and DocumentSnapshot<T>.
+DocumentSnapshot redefinition :
+	- data() is now back to firebase default behaviour, and rawData() is removed.
+	- model() is the new function to call to get the instancied custom object.
+	- document() can be called to get the Document<T> reference.
+
+
 <a name="6.0.0-rc.0"></a>
 # [6.0.0-rc.0](https://github.com/bricepepin/angular-firestype/compare/5.2.0...6.0.0-rc.0) (2018-04-26)
 
