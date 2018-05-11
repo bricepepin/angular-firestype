@@ -7,11 +7,13 @@ import { ModelTransformer } from '../model/model-transformer';
 import { Collection } from '../collection/collection';
 import { DocumentSnapshot } from './document-snapshot';
 import { Query } from '../collection/query';
+import { AngularFirestype } from '../angular-firestype.service';
 
 /** Return a typed DocumentSnapshot from a generic one and a transformer */
-export function typeDocumentSnapshot<T>(fSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>): DocumentSnapshot<T> {
+export function typeDocumentSnapshot<T>(fSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>, db: AngularFirestype)
+        : DocumentSnapshot<T> {
     const snapshot = fSnapshot as DocumentSnapshot<T>;
-    snapshot.document = () => new Document<T>(snapshot.ref);
+    snapshot.document = () => new Document<T>(snapshot.ref, db);
     snapshot.model = () => transformer.toModel(snapshot.data());
     return snapshot;
 }
@@ -21,10 +23,10 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     readonly id: string;
     private transformer: ModelTransformer<T>;
 
-    constructor(ref: DocumentReference) {
-        super(ref);
+    constructor(ref: DocumentReference, private db: AngularFirestype) {
+        super(ref, db);
         this.id = ref.id;
-        this.transformer = new ModelTransformer<T>(this.ref.path);
+        this.transformer = new ModelTransformer<T>(this.ref.path, this.db);
     }
 
     /** Set object data to database */
@@ -41,13 +43,13 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     collection<U>(path: string, queryFn?: QueryFn): Collection<U> {
         const ref = this.ref.collection(path);
         const queryBuilder = queryFn as any;
-        return new Collection<U>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref);
+        return new Collection<U>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref, this.db);
     }
 
     /** Listen to snapshot updates from the document. */
     snapshotChanges(): Observable<Action<DocumentSnapshot<T>>> {
         return super.snapshotChanges().map(action => {
-            typeDocumentSnapshot<T>(action.payload, this.transformer);
+            typeDocumentSnapshot<T>(action.payload, this.transformer, this.db);
             return action as Action<DocumentSnapshot<T>>;
         });
     }

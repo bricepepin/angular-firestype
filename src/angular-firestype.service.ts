@@ -1,7 +1,8 @@
-import { Injectable, Optional, Inject } from '@angular/core';
+import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
+import { FirebaseOptions } from '@firebase/app-types';
 import { DocumentReference, CollectionReference } from '@firebase/firestore-types';
-import { FirebaseApp } from 'angularfire2';
-import { associateQuery, AngularFirestore, QueryFn } from 'angularfire2/firestore';
+import { FirebaseApp, FirebaseAppConfig, FirebaseAppName } from 'angularfire2';
+import { AngularFirestore, QueryFn } from 'angularfire2/firestore';
 
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { Collection } from './collection/collection';
@@ -11,7 +12,6 @@ import { ModelType } from './model/model-type';
 import { ObjectOf } from './object-of';
 import { Transaction } from './transaction/transaction';
 import { Query } from './collection/query';
-import { Options } from './options';
 
 /**
  * Type handling for AngularFirestore
@@ -19,31 +19,34 @@ import { Options } from './options';
 @Injectable()
 export class AngularFirestype extends AngularFirestore {
   /** Firestore constructor */
-  constructor(public app: FirebaseApp, @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
-      @Inject(ModelToken) model: ObjectOf<ModelType<any>>) {
-    super(app, shouldEnablePersistence);
-    Options.setModel(model);
-    Options.setFirestore(this.firestore);
+  constructor(@Inject(FirebaseAppConfig) config: FirebaseOptions, @Optional() @Inject(FirebaseAppName) name: string,
+      @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean, @Inject(PLATFORM_ID) platformId: Object,
+      zone: NgZone, @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
+    super(config, name, shouldEnablePersistence, PLATFORM_ID, zone);
   }
 
   /**
-   * Create a reference to a Collection based on a path and an optional query function to narrow the result set.
-   * This collection handle the type transformation accept custom objects and return them initialiazed.
+   * Create a reference to a Firestore Collection based on a path or
+   * CollectionReference and an optional query function to narrow the result set.
+   * @param pathOrRef
+   * @param queryFn
    */
-  collection<T>(path: string, queryFn?: QueryFn): Collection<T> {
-    const ref = this.firestore.collection(path);
+  collection<T>(pathOrRef: string | CollectionReference, queryFn?: QueryFn): Collection<T> {
+    const ref: CollectionReference = typeof pathOrRef === 'string' ? this.firestore.collection(pathOrRef) : pathOrRef;
     const queryBuilder = queryFn as any;
-    return new Collection<T>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref);
+    return new Collection<T>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref, this);
   }
 
   /**
-   * Create a reference to a Firestore Document based on a path. Note that documents
-   * are not queryable because they are simply objects. However, documents have
-   * sub-collections that return a Collection reference and can be queried.
-   * This collection handle the type transformation accept custom objects and return them initialiazed.
+   * Create a reference to a Firestore Document based on a path or
+   * DocumentReference. Note that documents are not queryable because they are
+   * simply objects. However, documents have sub-collections that return a
+   * Collection reference and can be queried.
+   * @param pathOrRef
    */
-  doc<T>(path: string): Document<T> {
-    return new Document<T>(this.firestore.doc(path));
+  doc<T>(pathOrRef: string | DocumentReference): Document<T> {
+    const ref: DocumentReference = typeof pathOrRef === 'string' ? this.firestore.doc(pathOrRef) : pathOrRef;
+    return new Document<T>(ref, this);
   }
 
   /**
@@ -62,7 +65,7 @@ export class AngularFirestype extends AngularFirestore {
    */
   runTransaction<T>(updateFunction: (transaction: Transaction) => Promise<T>): Promise<T> {
     return this.firestore.runTransaction(fTransaction => {
-      return updateFunction(new Transaction(fTransaction));
+      return updateFunction(new Transaction(fTransaction, this));
     });
   }
 }

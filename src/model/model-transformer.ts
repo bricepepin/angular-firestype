@@ -1,17 +1,18 @@
+import { firestore } from 'firebase/app';
 import { DocumentData } from '@firebase/firestore-types';
 import { Document } from '../document/document';
-import { Options } from '../options';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
 import { ModelUtils } from './model-utils';
 import { ModelOptions } from './model-options';
+import { AngularFirestype } from '../angular-firestype.service';
 
 /** Transforms a model to data and data to model for a database path */
 export class ModelTransformer<T> {
     private descriptor: ModelType<T>;
 
-    constructor(path: string, private options: ModelOptions<T> = {}) {
-        this.descriptor = ModelUtils.getModelType<T>(path);
+    constructor(path: string, private db: AngularFirestype, private options: ModelOptions<T> = {}) {
+        this.descriptor = ModelUtils.getModelType<T>(path, this.db.model);
     }
 
     /** Initialize a custom object from data and model descriptor */
@@ -71,7 +72,7 @@ export class ModelTransformer<T> {
     private instanciateField(data: DocumentData, name: string, modelType: ModelType<any>): any {
         if (data[name] !== undefined && data[name] !== null) {
             if (ModelUtils.getType(modelType) === Document) {
-                data[name] = new Document(this.options.refAsPath ? Options.firestore().doc(data[name]) : data[name]);
+                data[name] = this.db.doc(data[name]);
             } else {
                 data[name] = this.instanciate(data[name], modelType);
             }
@@ -102,11 +103,11 @@ export class ModelTransformer<T> {
 
                 // Options handling
                 if (options.timestampOnCreate && !model[options.timestampOnCreate]) {
-                    data[options.timestampOnCreate] = Options.firestoreStatic.FieldValue.serverTimestamp() as any;
+                    data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
                 }
 
                 if (options.timestampOnUpdate) {
-                    data[options.timestampOnUpdate] = Options.firestoreStatic.FieldValue.serverTimestamp() as any;
+                    data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
                 }
             }
         }

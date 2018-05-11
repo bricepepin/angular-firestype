@@ -1,19 +1,15 @@
-import { FirebaseFirestore } from '@firebase/firestore-types';
-import { firestore } from 'firebase/app';
-import { Options } from '../options';
-import { ObjectOf } from '../object-of';
 import { ModelType } from './model-type';
 import { ModelDescriptor } from './model-descriptor';
+import { ObjectOf } from '../object-of';
 
 /**
  * Model definition.
- * This class needs types and firestore initialisation before use.
  */
 export class ModelUtils {
     /** Return the modelType matching provided path */
-    static getModelType<T>(path: string = ''): ModelType<T> {
+    static getModelType<T>(path: string = '', model: ObjectOf<ModelType<any>>): ModelType<T> {
         const segments: string[] = path.replace(/^\//, '').split('/');
-        let current: ModelType<T> = Options.model()[segments[0]];
+        let current: ModelType<T> = model[segments[0]];
 
         for (let i = 2; i < segments.length; i += 2) {
             const modelDescriptor: ModelDescriptor<any> = this.getModelDescriptor(current);

@@ -1,6 +1,5 @@
 export { AngularFirestype } from './src/angular-firestype.service';
 export { AngularFirestypeModule } from './src/angular-firestype.module';
-export { Options } from './src/options';
 
 export { Collection } from './src/collection/collection';
 export { Document } from './src/document/document';
