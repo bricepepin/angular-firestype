@@ -1,8 +1,8 @@
 import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
-import { FirebaseOptions } from '@firebase/app-types';
-import { DocumentReference, CollectionReference } from '@firebase/firestore-types';
-import { FirebaseApp, FirebaseAppConfig, FirebaseAppName } from 'angularfire2';
-import { AngularFirestore, QueryFn } from 'angularfire2/firestore';
+import { FirebaseOptions, FirebaseAppConfig } from '@firebase/app-types';
+import { DocumentReference, CollectionReference, Settings } from '@firebase/firestore-types';
+import { FirebaseOptionsToken, FirebaseAppConfigToken, FirebaseAppNameToken } from 'angularfire2';
+import { AngularFirestore, QueryFn, FirestoreSettingsToken } from 'angularfire2/firestore';
 
 import { EnablePersistenceToken } from './enable-persistence-token';
 import { Collection } from './collection/collection';
@@ -19,10 +19,15 @@ import { Query } from './collection/query';
 @Injectable()
 export class AngularFirestype extends AngularFirestore {
   /** Firestore constructor */
-  constructor(@Inject(FirebaseAppConfig) config: FirebaseOptions, @Optional() @Inject(FirebaseAppName) name: string,
-      @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean, @Inject(PLATFORM_ID) platformId: Object,
-      zone: NgZone, @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
-    super(config, name, shouldEnablePersistence, PLATFORM_ID, zone);
+  constructor(@Inject(FirebaseOptionsToken) options: FirebaseOptions,
+      @Optional() @Inject(FirebaseAppConfigToken) config: FirebaseAppConfig,
+      @Optional() @Inject(FirebaseAppNameToken) name: string,
+      @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
+      @Optional() @Inject(FirestoreSettingsToken) settings: Settings,
+      @Inject(PLATFORM_ID) platformId: Object,
+      zone: NgZone,
+      @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
+    super(options, config, name, shouldEnablePersistence, settings, PLATFORM_ID, zone);
   }
 
   /**

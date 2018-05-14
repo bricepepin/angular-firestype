@@ -1,7 +1,7 @@
 import { DocumentReference, DocumentSnapshot as FDocumentSnapshot, SetOptions } from '@firebase/firestore-types';
 import { AngularFirestoreDocument, associateQuery, QueryFn, Action } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 
 import { ModelTransformer } from '../model/model-transformer';
 import { Collection } from '../collection/collection';
@@ -48,10 +48,12 @@ export class Document<T> extends AngularFirestoreDocument<T> {
 
     /** Listen to snapshot updates from the document. */
     snapshotChanges(): Observable<Action<DocumentSnapshot<T>>> {
-        return super.snapshotChanges().map(action => {
-            typeDocumentSnapshot<T>(action.payload, this.transformer, this.db);
-            return action as Action<DocumentSnapshot<T>>;
-        });
+        return super.snapshotChanges().pipe(
+            map(action => {
+                typeDocumentSnapshot<T>(action.payload, this.transformer, this.db);
+                return action as Action<DocumentSnapshot<T>>;
+            })
+        );
     }
 
     /**

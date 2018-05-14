@@ -23,7 +23,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param events
    */
   stateChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return super.stateChanges(events).map(actions => this.toTypedActions(actions));
+    return super.stateChanges(events).pipe(map(actions => this.toTypedActions(actions)));
   }
 
   /**
@@ -32,20 +32,22 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param events
    */
   snapshotChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return super.snapshotChanges(events).map(actions => this.toTypedActions(actions));
+    return super.snapshotChanges(events).pipe(map(actions => this.toTypedActions(actions)));
   }
 
   /** Listen to all documents in the collection and its possible query as an Observable. */
   valueChanges(): Observable<T[]> {
-    return super.valueChanges().map(data => {
-      const models: T[] = [];
+    return super.valueChanges().pipe(
+      map(data => {
+        const models: T[] = [];
 
-      for (const element of data) {
-        models.push(this.transformer.toModel(element));
-      }
+        for (const element of data) {
+          models.push(this.transformer.toModel(element));
+        }
 
-      return models;
-    });
+        return models;
+      })
+    );
   }
 
   /** Add data to a collection reference. */
@@ -55,9 +57,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
 
   /** Add data to a collection reference and return a Document referencing it. */
   addDocument(data: T): Promise<Document<T>> {
-    return new Promise<Document<T>>(resolve => {
-      this.add(data).then(ref => resolve(new Document<T>(ref, this.db)));
-    });
+    return this.add(data).then(ref => Promise.resolve(new Document<T>(ref, this.db)));
   }
 
   /** Create a reference to a single document in a collection. */
@@ -95,7 +95,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
       first(),
       map(models => models.length > 0 ? models[0] : null)
     )
-      .subscribe(value, error, complete);
+    .subscribe(value, error, complete);
   }
 
   /**
@@ -107,7 +107,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
       first(),
       map(models => models.length > 0 ? models[0] : null)
     )
-      .subscribe(value, error, complete);
+    .subscribe(value, error, complete);
   }
 
   /**

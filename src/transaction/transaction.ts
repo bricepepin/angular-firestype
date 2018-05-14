@@ -23,10 +23,8 @@ export class Transaction {
     get<T>(document: Document<T>): Promise<DocumentSnapshot<T>> {
         const transformer = new ModelTransformer<T>(document.ref.path, this.db);
 
-        return new Promise<DocumentSnapshot<T>>((resolve, reject) => {
-            this.fTransaction.get(document.ref)
-                .then(documentSnapshot => resolve(typeDocumentSnapshot<T>(documentSnapshot, transformer, this.db)));
-        });
+        return this.fTransaction.get(document.ref)
+            .then(documentSnapshot => Promise.resolve(typeDocumentSnapshot<T>(documentSnapshot, transformer, this.db)));
     }
 
     /**
