@@ -1,4 +1,4 @@
-import { firestore } from 'firebase/app';
+import firebase from '@firebase/app';
 import { DocumentData } from '@firebase/firestore-types';
 import { Document } from '../document/document';
 import { ModelDescriptor } from './model-descriptor';
@@ -103,11 +103,11 @@ export class ModelTransformer<T> {
 
                 // Options handling
                 if (options.timestampOnCreate && !model[options.timestampOnCreate]) {
-                    data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
+                    data[options.timestampOnCreate] = firebase.firestore.FieldValue.serverTimestamp() as any;
                 }
 
                 if (options.timestampOnUpdate) {
-                    data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
+                    data[options.timestampOnUpdate] = firebase.firestore.FieldValue.serverTimestamp() as any;
                 }
             }
         }

@@ -29,8 +29,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "deploy": "npm publish dist",
-    "deploy-next": "npm publish dist --tag next",
+    "deploy": "npm run build && npm publish dist",
+    "deploy-next": "npm run build && npm publish dist --tag next",
     "install-latest": "ncu -u && npm install"
   },
   "peerDependencies": {
