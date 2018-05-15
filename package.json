@@ -35,7 +35,7 @@
   },
   "peerDependencies": {
     "@angular/core": "^6.0.0",
-    "angularfire2": "^5.0.0-rc.8",
+    "angularfire2": "^5.0.0-rc.8.0",
     "firebase": "^5.0.0",
     "rxjs": "^6.0.0"
   },
@@ -52,7 +52,7 @@
     "@types/jasmine": "2.8.7",
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "10.0.8",
-    "angularfire2": "^5.0.0-rc.8",
+    "angularfire2": "^5.0.0-rc.8.0",
     "codelyzer": "~4.3.0",
     "conventional-changelog-cli": "^1.3.22",
     "firebase": "5.0.2",
