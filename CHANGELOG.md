@@ -1,3 +1,11 @@
+<a name="6.1.1"></a>
+## [6.1.1](https://github.com/bricepepin/angular-firestype/compare/6.1.0...6.1.1) (2018-05-15)
+
+### Bug Fixes
+
+* **firebase:** Fix Fix firebase 5.0.0 imports ([633fb9b](https://github.com/bricepepin/angular-firestype/commit/633fb9b))
+
+
 <a name="6.1.0"></a>
 # [6.1.0](https://github.com/bricepepin/angular-firestype/compare/6.0.0...6.1.0) (2018-05-15)
 
