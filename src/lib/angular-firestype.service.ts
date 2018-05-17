@@ -16,7 +16,9 @@ import { Query } from './collection/query';
 /**
  * Type handling for AngularFirestore
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AngularFirestype extends AngularFirestore {
   /** Firestore constructor */
   constructor(@Inject(FirebaseOptionsToken) options: FirebaseOptions,
