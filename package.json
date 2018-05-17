@@ -34,5 +34,8 @@
     "angularfire2": "^5.0.0-rc.8.0",
     "firebase": "^5.0.0",
     "rxjs": "^6.0.0"
+  },
+  "devDependencies": {
+    "conventional-changelog-cli": "^1.3.22"
   }
 }
