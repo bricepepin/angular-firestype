@@ -26,9 +26,8 @@
     "test": "ng test angular-firestype",
     "lint": "ng lint angular-firestype",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "deploy": "npm run build --prod && npm publish ../../dist/angular-firestype",
-    "deploy-next": "npm run build --prod && npm publish ../../dist/angular-firestype --tag next",
-    "install-latest": "ncu -a && npm install"
+    "deploy": "npm run build --prod && npm publish dist/angular-firestype",
+    "deploy-next": "npm run build --prod && npm publish dist/angular-firestype --tag next"
   },
   "peerDependencies": {
     "@angular/core": "^6.0.0",

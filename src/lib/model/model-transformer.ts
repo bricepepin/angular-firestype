@@ -1,4 +1,4 @@
-import firebase from '@firebase/app';
+import firebase from 'firebase/app';
 import { DocumentData } from '@firebase/firestore-types';
 import { Document } from '../document/document';
 import { ModelDescriptor } from './model-descriptor';
