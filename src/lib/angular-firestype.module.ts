@@ -1,7 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { AngularFireModule } from 'angularfire2';
+import { EnablePersistenceToken } from 'angularfire2/firestore';
 
-import { EnablePersistenceToken } from './enable-persistence-token';
 import { AngularFirestype } from './angular-firestype.service';
 import { ModelToken } from './model/model-token';
 import { ModelType } from './model/model-type';
