@@ -1,5 +1,6 @@
-import firebase from 'firebase/app';
 import { DocumentData } from '@firebase/firestore-types';
+import firebase from '@firebase/app';
+
 import { Document } from '../document/document';
 import { ModelDescriptor } from './model-descriptor';
 import { ModelType } from './model-type';
