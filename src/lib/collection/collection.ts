@@ -1,5 +1,5 @@
 import { CollectionReference, Query, DocumentChangeType, DocumentReference } from '@firebase/firestore-types';
-import { AngularFirestoreCollection, DocumentChangeAction as FDocumentChangeAction } from 'angularfire2/firestore';
+import { AngularFirestoreCollection, DocumentChangeAction as ADocumentChangeAction } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 
@@ -23,7 +23,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param events
    */
   stateChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return super.stateChanges(events).pipe(map(actions => this.toTypedActions(actions)));
+    return super.stateChanges(events).pipe(map(actions => this.typeActions(actions)));
   }
 
   /**
@@ -32,7 +32,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param events
    */
   snapshotChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return super.snapshotChanges(events).pipe(map(actions => this.toTypedActions(actions)));
+    return super.snapshotChanges(events).pipe(map(actions => this.typeActions(actions)));
   }
 
   /** Listen to all documents in the collection and its possible query as an Observable. */
@@ -114,7 +114,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * Cast generic actions to typed ones
    * @param actions : array of actions to cast
    */
-  private toTypedActions(actions: FDocumentChangeAction[]): DocumentChangeAction<T>[] {
+  private typeActions(actions: ADocumentChangeAction<T>[]): DocumentChangeAction<T>[] {
     for (const element of actions) {
       typeDocumentSnapshot<T>(element.payload.doc, this.transformer, this.db);
     }

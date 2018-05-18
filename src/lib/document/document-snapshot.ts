@@ -1,8 +1,7 @@
-import { DocumentData, DocumentSnapshot } from '@firebase/firestore-types';
+import { DocumentSnapshotExists } from 'angularfire2/firestore';
 import { Document } from './document';
 
-/** A typed Document Snapshot */
-export interface DocumentSnapshot<T> extends DocumentSnapshot {
+export interface DocumentSnapshot<T> extends DocumentSnapshotExists<T> {
     /** Get the Document reference corresponding to this snapshot */
     document(): Document<T>;
 

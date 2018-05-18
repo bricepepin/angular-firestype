@@ -1,7 +1,7 @@
 import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { FirebaseOptions, FirebaseAppConfig } from '@firebase/app-types';
 import { DocumentReference, CollectionReference, Settings } from '@firebase/firestore-types';
-import { FirebaseOptionsToken, FirebaseAppConfigToken, FirebaseAppNameToken } from 'angularfire2';
+import { FirebaseOptionsToken, FirebaseNameOrConfigToken } from 'angularfire2';
 import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken } from 'angularfire2/firestore';
 
 import { Collection } from './collection/collection';
@@ -21,14 +21,13 @@ import { Query } from './collection/query';
 export class AngularFirestype extends AngularFirestore {
   /** Firestore constructor */
   constructor(@Inject(FirebaseOptionsToken) options: FirebaseOptions,
-      @Optional() @Inject(FirebaseAppConfigToken) config: FirebaseAppConfig,
-      @Optional() @Inject(FirebaseAppNameToken) name: string,
+      @Optional() @Inject(FirebaseNameOrConfigToken) nameOrConfig: string | FirebaseAppConfig | undefined,
       @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
       @Optional() @Inject(FirestoreSettingsToken) settings: Settings,
       @Inject(PLATFORM_ID) platformId: Object,
       zone: NgZone,
       @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
-    super(options, config, name, shouldEnablePersistence, settings, PLATFORM_ID, zone);
+    super(options, nameOrConfig, shouldEnablePersistence, settings, PLATFORM_ID, zone);
   }
 
   /**
