@@ -1,3 +1,13 @@
+<a name="6.2.0"></a>
+# [6.2.0](https://github.com/bricepepin/angular-firestype/compare/6.1.1...6.2.0) (2018-05-19)
+
+
+### Features
+
+* **angularfire2:** support for angularfire2@5.0.0-rc.9 ([05dd0bf](https://github.com/bricepepin/angular-firestype/commit/05dd0bf))
+
+
+
 <a name="6.1.1"></a>
 ## [6.1.1](https://github.com/bricepepin/angular-firestype/compare/6.1.0...6.1.1) (2018-05-15)
 
