@@ -61,12 +61,12 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   }
 
   /** Create a reference to a single document in a collection. */
-  doc<U>(path: string): Document<U> {
+  doc<U>(path?: string): Document<U> {
     return new Document<U>(this.ref.doc(path), this.db);
   }
 
   /** Create a reference to a single document in a collection with the same type as the collection. */
-  document(path: string): Document<T> {
+  document(path?: string): Document<T> {
     return this.doc<T>(path);
   }
 
