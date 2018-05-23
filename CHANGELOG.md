@@ -1,3 +1,29 @@
+<a name="7.0.0"></a>
+# [7.0.0](https://github.com/bricepepin/angular-firestype/compare/6.2.0...7.0.0) (2018-05-23)
+
+
+### Features
+
+* **collection:** allow to call doc() without arguments as does firebase SDK ([2d88bba](https://github.com/bricepepin/angular-firestype/commit/2d88bba))
+
+
+### BREAKING CHANGES
+
+* **helpers:** Move helpers functions to promises for better interoperability. ([24e9caa](https://github.com/bricepepin/angular-firestype/commit/24e9caa))
+
+To update your code, you only need to add `.then` after each function name. For exemple, `doc.current(data => console.log(data))` becomes `doc.current.then(data => console.log(data))`.
+
+Here is the list of all changed functions :
+- Collection:
+  - current
+  - currentSnapshot
+  - first
+  - firstSnapshot
+- Document:
+  - current
+  - currentSnapshot
+
+
 <a name="6.2.0"></a>
 # [6.2.0](https://github.com/bricepepin/angular-firestype/compare/6.1.1...6.2.0) (2018-05-19)
 
@@ -46,9 +72,9 @@
 
 Add model types on classes DocumentChange<T>, DocumentChangeAction<T> and DocumentSnapshot<T>.
 DocumentSnapshot redefinition :
-	- data() is now back to firebase default behaviour, and rawData() is removed.
-	- model() is the new function to call to get the instancied custom object.
-	- document() can be called to get the Document<T> reference.
+- data() is now back to firebase default behaviour, and rawData() is removed.
+- model() is the new function to call to get the instancied custom object.
+- document() can be called to get the Document<T> reference.
 
 
 <a name="6.0.0-rc.0"></a>
@@ -70,9 +96,9 @@ DocumentSnapshot redefinition :
 
 Add model types on classes DocumentChange<T>, DocumentChangeAction<T> and DocumentSnapshot<T>.
 DocumentSnapshot redefinition :
-	- data() is now back to firebase default behaviour, and rawData() is removed.
-	- model() is the new function to call to get the instancied custom object.
-	- document() can be called to get the Document<T> reference.
+- data() is now back to firebase default behaviour, and rawData() is removed.
+- model() is the new function to call to get the instancied custom object.
+- document() can be called to get the Document<T> reference.
 
 
 
