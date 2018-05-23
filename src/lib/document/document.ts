@@ -23,6 +23,11 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     readonly id: string;
     private transformer: ModelTransformer<T>;
 
+    /** Return the current value of the document. */
+    readonly current: Promise<T> = this.valueChanges().pipe(first()).toPromise();
+    /** Return the current snapshot of the document */
+    readonly currentSnapshot: Promise<Action<DocumentSnapshot<T>>> = this.snapshotChanges().pipe(first()).toPromise();
+
     constructor(ref: DocumentReference, private db: AngularFirestype) {
         super(ref, db);
         this.id = ref.id;
@@ -54,21 +59,5 @@ export class Document<T> extends AngularFirestoreDocument<T> {
                 return action as Action<DocumentSnapshot<T>>;
             })
         );
-    }
-
-    /**
-     * Return current value of the document, without updates afterwards.
-     * The unsubscribe process is done automatically.
-     */
-    current(value?: (model: T) => void, error?: (error: any) => void, complete?: () => void) {
-        this.valueChanges().pipe(first()).subscribe(value, error, complete);
-    }
-
-    /**
-     * Return current snapshot of the document, without updates afterwards.
-     * The unsubscribe process is done automatically.
-     */
-    currentSnapshot(value?: (snapshot: Action<DocumentSnapshot<T>>) => void, error?: (error: any) => void, complete?: () => void) {
-        this.snapshotChanges().pipe(first()).subscribe(value, error, complete);
     }
 }

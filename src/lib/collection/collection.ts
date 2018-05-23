@@ -11,6 +11,15 @@ import { AngularFirestype } from '../angular-firestype.service';
 export class Collection<T> extends AngularFirestoreCollection<T> {
   private transformer: ModelTransformer<T>;
 
+  /** Return the current value of the collection. */
+  readonly current: Promise<T[]> = this.valueChanges().pipe(first()).toPromise();
+  /** Return the current snapshots of the collection */
+  readonly currentSnapshot: Promise<DocumentChangeAction<T>[]> = this.snapshotChanges().pipe(first()).toPromise();
+  /** Return the first value of the current collection. */
+  readonly first: Promise<T> = this.current.then(current => current.length > 0 ? current[0] : null);
+  /** Return the first snapshot of the current collection */
+  readonly firstSnapshot: Promise<DocumentChangeAction<T>> = this.currentSnapshot.then(current => current.length > 0 ? current[0] : null);
+
   constructor(ref: CollectionReference, query: Query, private db: AngularFirestype) {
     super(ref, query, db);
     this.transformer = new ModelTransformer<T>(this.ref.path, this.db);
@@ -68,46 +77,6 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   /** Create a reference to a single document in a collection with the same type as the collection. */
   document(path?: string): Document<T> {
     return this.doc<T>(path);
-  }
-
-  /**
-   * Return current value of the collection, without updates afterwards.
-   * The unsubscribe process is done automatically.
-   */
-  current(value?: (model: T[]) => void, error?: (error: any) => void, complete?: () => void) {
-    this.valueChanges().pipe(first()).subscribe(value, error, complete);
-  }
-
-  /**
-   * Return current snapshot of the collection, without updates afterwards.
-   * The unsubscribe process is done automatically.
-   */
-  currentSnapshot(value?: (snapshot: DocumentChangeAction<T>[]) => void, error?: (error: any) => void, complete?: () => void) {
-      this.snapshotChanges().pipe(first()).subscribe(value, error, complete);
-  }
-
-  /**
-   * Return the first value returned by a collection query, without updates afterwards.
-   * The unsubscribe process is done automatically.
-   */
-  first(value?: (model: T) => void, error?: (error: any) => void, complete?: () => void) {
-    this.valueChanges().pipe(
-      first(),
-      map(models => models.length > 0 ? models[0] : null)
-    )
-    .subscribe(value, error, complete);
-  }
-
-  /**
-   * Return the first snapshot returned by a collection query, without updates afterwards.
-   * The unsubscribe process is done automatically.
-   */
-  firstSnapshot(value?: (model: DocumentChangeAction<T>) => void, error?: (error: any) => void, complete?: () => void) {
-    this.snapshotChanges().pipe(
-      first(),
-      map(models => models.length > 0 ? models[0] : null)
-    )
-    .subscribe(value, error, complete);
   }
 
   /**

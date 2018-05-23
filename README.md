@@ -144,7 +144,7 @@ AngularFirestype presents a few differences with AngularFirestore :
     This is used to pass the mapping object to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
 - You cannot add a document to a collection not defined in AngularFiretype's model mapping.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
-    They work with custom types, inferred from the collection path and the mapping object. They also have some helpers method like `current()` or `first()`.
+    They work with custom types, inferred from the collection path and the mapping object. They also have some helpers promises like `current` or `currentSnapshot`.
 - `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction` and `Transaction` have been redefined to work with custom types.
 - `DocumentSnapshot` has a new `model()` method allowing to get the instancied custom object without additional steps, and `document()` to get a `Document` reference.
 
