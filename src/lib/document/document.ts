@@ -23,11 +23,6 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     readonly id: string;
     private transformer: ModelTransformer<T>;
 
-    /** Return the current value of the document. */
-    readonly current: Promise<T> = this.valueChanges().pipe(first()).toPromise();
-    /** Return the current snapshot of the document */
-    readonly currentSnapshot: Promise<Action<DocumentSnapshot<T>>> = this.snapshotChanges().pipe(first()).toPromise();
-
     constructor(ref: DocumentReference, private db: AngularFirestype) {
         super(ref, db);
         this.id = ref.id;
@@ -53,11 +48,12 @@ export class Document<T> extends AngularFirestoreDocument<T> {
 
     /** Listen to snapshot updates from the document. */
     snapshotChanges(): Observable<Action<DocumentSnapshot<T>>> {
-        return super.snapshotChanges().pipe(
-            map(action => {
-                typeDocumentSnapshot<T>(action.payload, this.transformer, this.db);
-                return action as Action<DocumentSnapshot<T>>;
-            })
-        );
+        return super.snapshotChanges()
+            .pipe(
+                map(action => {
+                    typeDocumentSnapshot<T>(action.payload, this.transformer, this.db);
+                    return action as Action<DocumentSnapshot<T>>;
+                })
+            );
     }
 }

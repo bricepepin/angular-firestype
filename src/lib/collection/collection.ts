@@ -1,7 +1,7 @@
 import { CollectionReference, Query, DocumentChangeType, DocumentReference } from '@firebase/firestore-types';
 import { AngularFirestoreCollection, DocumentChangeAction as ADocumentChangeAction } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { ModelTransformer } from '../model/model-transformer';
 import { Document, typeDocumentSnapshot } from '../document/document';
@@ -10,15 +10,6 @@ import { AngularFirestype } from '../angular-firestype.service';
 
 export class Collection<T> extends AngularFirestoreCollection<T> {
   private transformer: ModelTransformer<T>;
-
-  /** Return the current value of the collection. */
-  readonly current: Promise<T[]> = this.valueChanges().pipe(first()).toPromise();
-  /** Return the current snapshots of the collection */
-  readonly currentSnapshot: Promise<DocumentChangeAction<T>[]> = this.snapshotChanges().pipe(first()).toPromise();
-  /** Return the first value of the current collection. */
-  readonly first: Promise<T> = this.current.then(current => current.length > 0 ? current[0] : null);
-  /** Return the first snapshot of the current collection */
-  readonly firstSnapshot: Promise<DocumentChangeAction<T>> = this.currentSnapshot.then(current => current.length > 0 ? current[0] : null);
 
   constructor(ref: CollectionReference, query: Query, private db: AngularFirestype) {
     super(ref, query, db);
@@ -32,7 +23,8 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param events
    */
   stateChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return super.stateChanges(events).pipe(map(actions => this.typeActions(actions)));
+    return super.stateChanges(events)
+      .pipe(map(actions => this.typeActions(actions)));
   }
 
   /**
@@ -41,22 +33,24 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param events
    */
   snapshotChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
-    return super.snapshotChanges(events).pipe(map(actions => this.typeActions(actions)));
+    return super.snapshotChanges(events)
+      .pipe(map(actions => this.typeActions(actions)));
   }
 
   /** Listen to all documents in the collection and its possible query as an Observable. */
   valueChanges(): Observable<T[]> {
-    return super.valueChanges().pipe(
-      map(data => {
-        const models: T[] = [];
+    return super.valueChanges()
+      .pipe(
+        map(data => {
+          const models: T[] = [];
 
-        for (const element of data) {
-          models.push(this.transformer.toModel(element));
-        }
+          for (const element of data) {
+            models.push(this.transformer.toModel(element));
+          }
 
-        return models;
-      })
-    );
+          return models;
+        })
+      );
   }
 
   /** Add data to a collection reference. */
