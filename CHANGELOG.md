@@ -1,3 +1,19 @@
+<a name="8.0.0"></a>
+# [8.0.0](https://github.com/bricepepin/angular-firestype/compare/7.0.0...8.0.0) (2018-07-05)
+
+### BREAKING CHANGES
+* **helpers:** Collection and Document helpers promises are removed as they were not working as intended and returning promises instead of observables is not recommended in angular.
+
+Here is the list of the removed promises :
+- Collection:
+  - current
+  - currentSnapshot
+  - first
+  - firstSnapshot
+- Document:
+  - current
+  - currentSnapshot
+
 <a name="7.0.0"></a>
 # [7.0.0](https://github.com/bricepepin/angular-firestype/compare/6.2.0...7.0.0) (2018-05-23)
 
