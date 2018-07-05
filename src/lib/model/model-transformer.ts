@@ -55,8 +55,8 @@ export class ModelTransformer<T> {
                 // Extract constructor arguments
                 if (modelDescriptor.arguments) {
                     for (const name of modelDescriptor.arguments) {
-                        args.push(data[name]);
-                        delete data[name];
+                        args.push(data[name as any]);
+                        delete data[name as any];
                     }
                 }
 
