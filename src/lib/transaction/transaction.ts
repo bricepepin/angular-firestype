@@ -1,5 +1,5 @@
 import { Transaction as FTransaction, SetOptions, FieldPath } from '@firebase/firestore-types';
-import { Document, typeDocumentSnapshot } from '../document/document';
+import { Document } from '../document/document';
 import { DocumentSnapshot } from '../document/document-snapshot';
 import { ModelTransformer } from '../model/model-transformer';
 import { AngularFirestype } from '../angular-firestype.service';
@@ -24,7 +24,7 @@ export class Transaction {
         const transformer = new ModelTransformer<T>(document.ref.path, this.db);
 
         return this.fTransaction.get(document.ref)
-            .then(documentSnapshot => Promise.resolve(typeDocumentSnapshot<T>(documentSnapshot, transformer, this.db)));
+            .then(documentSnapshot => Promise.resolve(Document.fromSnapshot<T>(documentSnapshot, transformer, this.db)));
     }
 
     /**

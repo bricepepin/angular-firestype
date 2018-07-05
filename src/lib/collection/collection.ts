@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ModelTransformer } from '../model/model-transformer';
-import { Document, typeDocumentSnapshot } from '../document/document';
+import { Document } from '../document/document';
 import { DocumentChangeAction } from '../document/document-change-action';
 import { AngularFirestype } from '../angular-firestype.service';
 
@@ -60,7 +60,8 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
 
   /** Add data to a collection reference and return a Document referencing it. */
   addDocument(data: T): Promise<Document<T>> {
-    return this.add(data).then(ref => Promise.resolve(new Document<T>(ref, this.db)));
+    return this.add(data)
+      .then(ref => Promise.resolve(new Document<T>(ref, this.db)));
   }
 
   /** Create a reference to a single document in a collection. */
@@ -79,7 +80,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    */
   private typeActions(actions: ADocumentChangeAction<T>[]): DocumentChangeAction<T>[] {
     for (const element of actions) {
-      typeDocumentSnapshot<T>(element.payload.doc, this.transformer, this.db);
+      Document.fromSnapshot<T>(element.payload.doc, this.transformer, this.db);
     }
 
     return actions as DocumentChangeAction<T>[];
