@@ -1,5 +1,5 @@
 import { DocumentReference, DocumentSnapshot as FDocumentSnapshot, SetOptions } from '@firebase/firestore-types';
-import { AngularFirestoreDocument, QueryFn, Action } from 'angularfire2/firestore';
+import { AngularFirestoreDocument, QueryFn, Action } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 

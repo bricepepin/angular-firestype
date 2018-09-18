@@ -1,4 +1,4 @@
-import { DocumentSnapshotExists } from 'angularfire2/firestore';
+import { DocumentSnapshotExists } from '@angular/fire/firestore';
 import { Document } from './document';
 
 export interface DocumentSnapshot<T> extends DocumentSnapshotExists<T> {

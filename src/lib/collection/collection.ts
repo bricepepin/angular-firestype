@@ -1,5 +1,5 @@
 import { CollectionReference, Query, DocumentChangeType, DocumentReference } from '@firebase/firestore-types';
-import { AngularFirestoreCollection, DocumentChangeAction as ADocumentChangeAction } from 'angularfire2/firestore';
+import { AngularFirestoreCollection, DocumentChangeAction as ADocumentChangeAction } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 

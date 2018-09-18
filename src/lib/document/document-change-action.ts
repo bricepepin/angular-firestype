@@ -1,4 +1,4 @@
-import { DocumentChangeAction } from 'angularfire2/firestore';
+import { DocumentChangeAction } from '@angular/fire/firestore';
 import { DocumentChange } from './document-change';
 
 /** A typed Document Snapshot */

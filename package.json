@@ -31,7 +31,7 @@
   },
   "peerDependencies": {
     "@angular/core": "^6.0.0",
-    "angularfire2": "^5.0.0-rc.8.0",
+    "@angular/fire": "^5.0.0",
     "firebase": "^5.0.0",
     "rxjs": "^6.0.0"
   },

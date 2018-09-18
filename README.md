@@ -8,7 +8,7 @@ Using a mapping object, it can add custom objects and get instancied data from F
 
 ## Install
 ```bash
-npm install firebase angularfire2 angular-firestype --save
+npm install firebase @angular/fire angular-firestype --save
 ```
 
 ## Use
@@ -17,8 +17,8 @@ Import the module in your app after `AngularFireModule` :
 ```ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestypeModule, ModelType } from 'angular-firestype';
 import { environment } from '../environments/environment';
 

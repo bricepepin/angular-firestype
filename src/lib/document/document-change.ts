@@ -1,4 +1,4 @@
-import { DocumentChange } from 'angularfire2/firestore';
+import { DocumentChange } from '@angular/fire/firestore';
 import { DocumentSnapshot } from './document-snapshot';
 
 /** A typed Document Change */

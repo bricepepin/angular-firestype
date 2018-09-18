@@ -1,8 +1,8 @@
 import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { FirebaseOptions, FirebaseAppConfig } from '@firebase/app-types';
 import { DocumentReference, CollectionReference, Settings } from '@firebase/firestore-types';
-import { FirebaseOptionsToken, FirebaseNameOrConfigToken } from 'angularfire2';
-import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken } from 'angularfire2/firestore';
+import { FirebaseOptionsToken, FirebaseNameOrConfigToken } from '@angular/fire';
+import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken } from '@angular/fire/firestore';
 
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
