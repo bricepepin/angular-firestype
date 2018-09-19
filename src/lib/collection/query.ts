@@ -1,14 +1,14 @@
-import { Query as FQuery, FieldPath, WhereFilterOp, OrderByDirection } from '@firebase/firestore-types';
+import { firestore } from 'firebase/app';
 import { Document } from '../document/document';
 import { DocumentSnapshot } from '../document/document-snapshot';
 
 /** A Query supporting Document as filters */
 export class Query {
-    constructor(private fQuery: FQuery) { }
+    constructor(private query: firestore.Query) { }
 
     /** Return the built query */
-    build(): FQuery {
-        return this.fQuery;
+    build(): firestore.Query {
+        return this.query;
     }
 
     /**
@@ -21,8 +21,8 @@ export class Query {
      * @param value The value for comparison
      * @return This query to chain calls.
      */
-    where(fieldPath: string | FieldPath, opStr: WhereFilterOp, value: any): Query {
-        this.fQuery = this.fQuery.where(fieldPath, opStr, value instanceof Document ? value.ref : value);
+    where(fieldPath: string | firestore.FieldPath, opStr: firestore.WhereFilterOp, value: any): Query {
+        this.query = this.query.where(fieldPath, opStr, value instanceof Document ? value.ref : value);
         return this;
     }
 
@@ -35,8 +35,8 @@ export class Query {
      * not specified, order will be ascending.
      * @return This query to chain calls.
      */
-    orderBy(fieldPath: string | FieldPath, directionStr?: OrderByDirection): Query {
-        this.fQuery = this.fQuery.orderBy(fieldPath, directionStr);
+    orderBy(fieldPath: string | firestore.FieldPath, directionStr?: firestore.OrderByDirection): Query {
+        this.query = this.query.orderBy(fieldPath, directionStr);
         return this;
     }
 
@@ -48,7 +48,7 @@ export class Query {
      * @return This query to chain calls.
      */
     limit(limit: number): Query {
-        this.fQuery = this.fQuery.limit(limit);
+        this.query = this.query.limit(limit);
         return this;
     }
 
@@ -65,7 +65,7 @@ export class Query {
      * @return This query to chain calls.
      */
     startAt(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Query {
-        this.fQuery = this.fQuery.startAt(snapshotOrFieldValue, fieldValues);
+        this.query = this.query.startAt(snapshotOrFieldValue, fieldValues);
         return this;
     }
 
@@ -82,7 +82,7 @@ export class Query {
      * @return This query to chain calls.
      */
     startAfter(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Query {
-        this.fQuery = this.fQuery.startAfter(snapshotOrFieldValue, fieldValues);
+        this.query = this.query.startAfter(snapshotOrFieldValue, fieldValues);
         return this;
     }
 
@@ -99,7 +99,7 @@ export class Query {
      * @return This query to chain calls.
      */
     endBefore(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Query {
-        this.fQuery = this.fQuery.endBefore(snapshotOrFieldValue, fieldValues);
+        this.query = this.query.endBefore(snapshotOrFieldValue, fieldValues);
         return this;
     }
 
@@ -116,7 +116,7 @@ export class Query {
      * @return This query to chain calls.
      */
     endAt(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Query {
-        this.fQuery = this.fQuery.endAt(snapshotOrFieldValue, fieldValues);
+        this.query = this.query.endAt(snapshotOrFieldValue, fieldValues);
         return this;
     }
 }

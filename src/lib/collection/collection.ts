@@ -1,4 +1,4 @@
-import { CollectionReference, Query, DocumentChangeType, DocumentReference } from '@firebase/firestore-types';
+import { firestore } from 'firebase/app';
 import { AngularFirestoreCollection, DocumentChangeAction as ADocumentChangeAction } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { AngularFirestype } from '../angular-firestype.service';
 export class Collection<T> extends AngularFirestoreCollection<T> {
   private transformer: ModelTransformer<T>;
 
-  constructor(ref: CollectionReference, query: Query, private db: AngularFirestype) {
+  constructor(ref: firestore.CollectionReference, query: firestore.Query, private db: AngularFirestype) {
     super(ref, query, db);
     this.transformer = new ModelTransformer<T>(this.ref.path, this.db);
   }
@@ -22,7 +22,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * your own data structure.
    * @param events
    */
-  stateChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
+  stateChanges(events?: firestore.DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
     return super.stateChanges(events)
       .pipe(map(actions => this.typeActions(actions)));
   }
@@ -32,7 +32,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * query order.
    * @param events
    */
-  snapshotChanges(events?: DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
+  snapshotChanges(events?: firestore.DocumentChangeType[]): Observable<DocumentChangeAction<T>[]> {
     return super.snapshotChanges(events)
       .pipe(map(actions => this.typeActions(actions)));
   }
@@ -54,7 +54,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   }
 
   /** Add data to a collection reference. */
-  add(data: T): Promise<DocumentReference> {
+  add(data: T): Promise<firestore.DocumentReference> {
     return super.add(this.transformer.toData(data));
   }
 

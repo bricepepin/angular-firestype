@@ -1,4 +1,4 @@
-import { DocumentReference, DocumentSnapshot as FDocumentSnapshot, SetOptions } from '@firebase/firestore-types';
+import { firestore } from 'firebase/app';
 import { AngularFirestoreDocument, QueryFn, Action } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -14,22 +14,23 @@ export class Document<T> extends AngularFirestoreDocument<T> {
   readonly id: string;
   private transformer: ModelTransformer<T>;
 
-  constructor(ref: DocumentReference, private db: AngularFirestype) {
+  constructor(ref: firestore.DocumentReference, private db: AngularFirestype) {
     super(ref, db);
     this.id = ref.id;
     this.transformer = new ModelTransformer<T>(this.ref.path, this.db);
   }
 
   /** Return a typed Document from a generic DocumentSnapshot and a transformer */
-  static fromSnapshot<T>(fSnapshot: FDocumentSnapshot, transformer: ModelTransformer<T>, db: AngularFirestype): DocumentSnapshot<T> {
-    const snapshot = fSnapshot as DocumentSnapshot<T>;
+  static fromSnapshot<T>(firestoreSnapshot: firestore.DocumentSnapshot, transformer: ModelTransformer<T>, db: AngularFirestype)
+      : DocumentSnapshot<T> {
+    const snapshot = firestoreSnapshot as DocumentSnapshot<T>;
     snapshot.document = () => new Document<T>(snapshot.ref, db);
     snapshot.model = () => transformer.toModel(snapshot.data());
     return snapshot;
   }
 
   /** Set object data to database */
-  set(data: T, options?: SetOptions): Promise<void> {
+  set(data: T, options?: firestore.SetOptions): Promise<void> {
     return super.set(this.transformer.toData(data), options);
   }
 

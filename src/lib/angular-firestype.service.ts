@@ -1,7 +1,6 @@
 import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
-import { FirebaseOptions, FirebaseAppConfig } from '@firebase/app-types';
-import { DocumentReference, CollectionReference, Settings } from '@firebase/firestore-types';
-import { FirebaseOptionsToken, FirebaseNameOrConfigToken } from '@angular/fire';
+import { firestore } from 'firebase/app';
+import { FirebaseOptionsToken, FirebaseNameOrConfigToken, FirebaseOptions, FirebaseAppConfig } from '@angular/fire';
 import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken } from '@angular/fire/firestore';
 
 import { Collection } from './collection/collection';
@@ -23,11 +22,11 @@ export class AngularFirestype extends AngularFirestore {
   constructor(@Inject(FirebaseOptionsToken) options: FirebaseOptions,
       @Optional() @Inject(FirebaseNameOrConfigToken) nameOrConfig: string | FirebaseAppConfig | undefined,
       @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
-      @Optional() @Inject(FirestoreSettingsToken) settings: Settings,
+      @Optional() @Inject(FirestoreSettingsToken) settings: firestore.Settings,
       @Inject(PLATFORM_ID) platformId: Object,
       zone: NgZone,
       @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
-    super(options, nameOrConfig, shouldEnablePersistence, settings, PLATFORM_ID, zone);
+    super(options, nameOrConfig, shouldEnablePersistence, settings, platformId, zone);
   }
 
   /**
@@ -36,8 +35,8 @@ export class AngularFirestype extends AngularFirestore {
    * @param pathOrRef
    * @param queryFn
    */
-  collection<T>(pathOrRef: string | CollectionReference, queryFn?: QueryFn): Collection<T> {
-    const ref: CollectionReference = typeof pathOrRef === 'string' ? this.firestore.collection(pathOrRef) : pathOrRef;
+  collection<T>(pathOrRef: string | firestore.CollectionReference, queryFn?: QueryFn): Collection<T> {
+    const ref: firestore.CollectionReference = typeof pathOrRef === 'string' ? this.firestore.collection(pathOrRef) : pathOrRef;
     const queryBuilder = queryFn as any;
     return new Collection<T>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref, this);
   }
@@ -49,8 +48,8 @@ export class AngularFirestype extends AngularFirestore {
    * Collection reference and can be queried.
    * @param pathOrRef
    */
-  doc<T>(pathOrRef: string | DocumentReference): Document<T> {
-    const ref: DocumentReference = typeof pathOrRef === 'string' ? this.firestore.doc(pathOrRef) : pathOrRef;
+  doc<T>(pathOrRef: string | firestore.DocumentReference): Document<T> {
+    const ref: firestore.DocumentReference = typeof pathOrRef === 'string' ? this.firestore.doc(pathOrRef) : pathOrRef;
     return new Document<T>(ref, this);
   }
 

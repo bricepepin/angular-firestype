@@ -1,5 +1,4 @@
-import { DocumentData } from '@firebase/firestore-types';
-import firebase from 'firebase/app';
+import { firestore } from 'firebase/app';
 
 import { Document } from '../document/document';
 import { ModelDescriptor } from './model-descriptor';
@@ -17,7 +16,7 @@ export class ModelTransformer<T> {
     }
 
     /** Initialize a custom object from data and model descriptor */
-    toModel(data: DocumentData): T {
+    toModel(data: firestore.DocumentData): T {
         return this.instanciate<T>(data, this.descriptor);
     }
 
@@ -32,7 +31,7 @@ export class ModelTransformer<T> {
     }
 
     /** Return an instanciation of the descriptor with provided data */
-    private instanciate<U>(data: DocumentData, descriptor: ModelType<U>): U {
+    private instanciate<U>(data: firestore.DocumentData, descriptor: ModelType<U>): U {
         let model: U;
 
         if (data) {
@@ -70,7 +69,7 @@ export class ModelTransformer<T> {
     }
 
     /** Instanciate data[name] using modelType information */
-    private instanciateField(data: DocumentData, name: string, modelType: ModelType<any>): any {
+    private instanciateField(data: firestore.DocumentData, name: string, modelType: ModelType<any>): any {
         if (data[name] !== undefined && data[name] !== null) {
             if (ModelUtils.getType(modelType) === Document) {
                 data[name] = this.db.doc(data[name]);
@@ -104,11 +103,11 @@ export class ModelTransformer<T> {
 
                 // Options handling
                 if (options.timestampOnCreate && !model[options.timestampOnCreate]) {
-                    data[options.timestampOnCreate] = firebase.firestore.FieldValue.serverTimestamp() as any;
+                    data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
                 }
 
                 if (options.timestampOnUpdate) {
-                    data[options.timestampOnUpdate] = firebase.firestore.FieldValue.serverTimestamp() as any;
+                    data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
                 }
             }
         }
@@ -117,7 +116,7 @@ export class ModelTransformer<T> {
     }
 
     /** Objectify data[name] using modelType information */
-    private objectifyField(data: DocumentData, name: string, modelType: ModelType<any>): any {
+    private objectifyField(data: firestore.DocumentData, name: string, modelType: ModelType<any>): any {
         if (data[name] !== undefined && data[name] !== null) {
             if (ModelUtils.getType(modelType) === Document) {
                 data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
