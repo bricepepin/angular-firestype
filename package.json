@@ -30,7 +30,7 @@
     "deploy-next": "npm run build --prod && npm publish dist/angular-firestype --tag next"
   },
   "peerDependencies": {
-    "@angular/core": "^6.0.0",
+    "@angular/core": "^7.0.0",
     "@angular/fire": "^5.0.0",
     "firebase": "^5.0.0",
     "rxjs": "^6.0.0"
