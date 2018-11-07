@@ -56,4 +56,14 @@ export class Document<T> extends AngularFirestoreDocument<T> {
         })
       );
   }
+
+  /** Retrieve the document once */
+  get(options?: firestore.GetOptions): Observable<DocumentSnapshot<T>> {
+    return super.get(options).pipe(map(document => Document.fromSnapshot<T>(document, this.transformer, this.db)));
+  }
+
+  /** Retrieve the value of the document once */
+  model(options?: firestore.GetOptions): Observable<T> {
+    return this.get(options).pipe(map(snapshot => snapshot.model()));
+  }
 }

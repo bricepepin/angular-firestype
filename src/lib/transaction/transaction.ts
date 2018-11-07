@@ -24,7 +24,7 @@ export class Transaction {
         const transformer = new ModelTransformer<T>(document.ref.path, this.db);
 
         return this.transaction.get(document.ref)
-            .then(documentSnapshot => Promise.resolve(Document.fromSnapshot<T>(documentSnapshot, transformer, this.db)));
+            .then(documentSnapshot => Document.fromSnapshot<T>(documentSnapshot, transformer, this.db));
     }
 
     /**
