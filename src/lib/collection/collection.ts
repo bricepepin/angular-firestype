@@ -7,6 +7,7 @@ import { ModelTransformer } from '../model/model-transformer';
 import { Document } from '../document/document';
 import { DocumentChangeAction } from '../document/document-change-action';
 import { AngularFirestype } from '../angular-firestype.service';
+import { QuerySnapshot } from './query-snapshot';
 
 export class Collection<T> extends AngularFirestoreCollection<T> {
   private transformer: ModelTransformer<T>;
@@ -14,6 +15,15 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   constructor(ref: firestore.CollectionReference, query: firestore.Query, private db: AngularFirestype) {
     super(ref, query, db);
     this.transformer = new ModelTransformer<T>(this.ref.path, this.db);
+  }
+
+  /** Return a typed query from a generic QuerySnapshot and a transformer */
+  static fromSnapshot<T>(firestoreSnapshot: firestore.QuerySnapshot, transformer: ModelTransformer<T>, db: AngularFirestype)
+      : QuerySnapshot<T> {
+    const snapshot = firestoreSnapshot as QuerySnapshot<T>;
+    snapshot.documents = () => snapshot.docs.map(doc => Document.fromSnapshot(doc, transformer, db));
+    snapshot.models = () => snapshot.documents().map(documentSnapshot => documentSnapshot.model());
+    return snapshot;
   }
 
  /**
@@ -61,12 +71,25 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   /** Add data to a collection reference and return a Document referencing it. */
   addDocument(data: T): Promise<Document<T>> {
     return this.add(data)
-      .then(ref => Promise.resolve(new Document<T>(ref, this.db)));
+      .then(ref => new Document<T>(ref, this.db));
   }
 
-  /** Create a reference to a single Document in a collection */
+  /** Create a reference to a single document in a collection */
   document(path?: string): Document<T> {
     return new Document<T>(this.ref.doc(path), this.db);
+  }
+
+  /**
+   * Retrieve the results of the query once.
+   * @param options
+   */
+  get(options?: firestore.GetOptions): Observable<QuerySnapshot<T>> {
+    return super.get(options).pipe(map(snapshot => Collection.fromSnapshot(snapshot, this.transformer, this.db)));
+  }
+
+  /** Retrieve the value of the query documents once */
+  models(options?: firestore.GetOptions): Observable<T[]> {
+    return this.get(options).pipe(map(snapshot => snapshot.models()));
   }
 
   /**
@@ -74,10 +97,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param actions : array of actions to cast
    */
   private typeActions(actions: ADocumentChangeAction<T>[]): DocumentChangeAction<T>[] {
-    for (const element of actions) {
-      Document.fromSnapshot<T>(element.payload.doc, this.transformer, this.db);
-    }
-
+    actions.forEach(action => Document.fromSnapshot<T>(action.payload.doc, this.transformer, this.db));
     return actions as DocumentChangeAction<T>[];
   }
 }
