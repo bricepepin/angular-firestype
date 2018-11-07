@@ -78,7 +78,7 @@ export class AppComponent {
        const usersCollection: Collection<User> = db.collection<User>('users');
        usersCollection.valueChanges().subscribe(users => this.users = users);
 
-       const userDoc: Document<User> = usersCollection.doc('user1');
+       const userDoc: Document<User> = usersCollection.document('user1');
        userDoc.valueChanges().subscribe(user => this.user = user);
        userDoc.set(this.user);
    }
@@ -145,8 +145,13 @@ AngularFirestype presents a few differences with AngularFirestore :
 - You cannot add a document to a collection not defined in AngularFiretype's model mapping.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
     They work with custom types, inferred from the collection path and the mapping object.
-- `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction` and `Transaction` have been redefined to work with custom types.
-- `DocumentSnapshot` has a new `model()` method allowing to get the instancied custom object without additional steps, and `document()` to get a `Document` reference.
+- `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction`, `QuerySnapShot` and `Transaction` have been redefined to work with custom types.
+
+A few functions have been added to those classes to deal with typing :
+- `Document` has a new `model()` method allowing to get a one time instancied custom object without additional steps.
+- `DocumentSnapshot` has a new `model()` method allowing to get the instancied custom object, and `document()` to get a `Document` reference.
+- `Collection` has a new `models()` method allowing to geta one time instancied custom objects, and `document()` to get a `Document` reference.
+- `QuerySnapShot` has a new `models()` method allowing to get the instancied custom objects, and `documents()` to get an array of `Document` references.
 
 ## Contribution
 Any contribution is appreciated : simply use AngularFirestype, talk about it, give some feedback or even develop something. And if you feel like it, you can support me through Paypal :
