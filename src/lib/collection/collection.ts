@@ -64,14 +64,9 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
       .then(ref => Promise.resolve(new Document<T>(ref, this.db)));
   }
 
-  /** Create a reference to a single document in a collection. */
-  doc<U>(path?: string): Document<U> {
-    return new Document<U>(this.ref.doc(path), this.db);
-  }
-
-  /** Create a reference to a single document in a collection with the same type as the collection. */
+  /** Create a reference to a single Document in a collection */
   document(path?: string): Document<T> {
-    return this.doc<T>(path);
+    return new Document<T>(this.ref.doc(path), this.db);
   }
 
   /**
