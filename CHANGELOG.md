@@ -1,3 +1,17 @@
+# [9.0.0](https://github.com/bricepepin/angular-firestype/compare/8.0.0...9.0.0) (2018-11-07)
+
+### BREAKING CHANGES
+* **collection** In Collection, `doc()` is back to @angular/fire behaviour to avoid compatibility problems. You should use `document()` to get a Document instance instead.
+* **@angular/fire** Update from angularfire2 to @angular/fire package. Now needs @angular/fire as peer dependency.
+
+### Features
+
+* **angular:** Move to angular@7.0.0 peer dependency ([5ff0937](https://github.com/bricepepin/angular-firestype/commit/5ff0937))
+* **collection:** add `get()` to retrieve a query once, and `models()` to retrive the values of the query once ([fcd4355](https://github.com/bricepepin/angular-firestype/commit/fcd4355))
+* **document:** add `get()` to retrieve a document once, and `model()` to retrive the value of the document once ([d98a073](https://github.com/bricepepin/angular-firestype/commit/d98a073))
+
+
+
 <a name="8.0.0"></a>
 # [8.0.0](https://github.com/bricepepin/angular-firestype/compare/7.0.0...8.0.0) (2018-07-05)
 
