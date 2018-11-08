@@ -1,7 +1,8 @@
 import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { firestore } from 'firebase/app';
 import { FirebaseOptionsToken, FirebaseNameOrConfigToken, FirebaseOptions, FirebaseAppConfig } from '@angular/fire';
-import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken } from '@angular/fire/firestore';
+import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken,
+  PersistenceSettingsToken } from '@angular/fire/firestore';
 
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
@@ -11,9 +12,7 @@ import { ObjectOf } from './object-of';
 import { Transaction } from './transaction/transaction';
 import { Query } from './collection/query';
 
-/**
- * Type handling for AngularFirestore
- */
+/** Type handling for AngularFirestore */
 @Injectable({
   providedIn: 'root'
 })
@@ -22,11 +21,12 @@ export class AngularFirestype extends AngularFirestore {
   constructor(@Inject(FirebaseOptionsToken) options: FirebaseOptions,
       @Optional() @Inject(FirebaseNameOrConfigToken) nameOrConfig: string | FirebaseAppConfig | undefined,
       @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
+      @Optional() @Inject(PersistenceSettingsToken) persistenceSettings: firestore.PersistenceSettings | undefined,
       @Optional() @Inject(FirestoreSettingsToken) settings: firestore.Settings,
       @Inject(PLATFORM_ID) platformId: Object,
       zone: NgZone,
       @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
-    super(options, nameOrConfig, shouldEnablePersistence, settings, platformId, zone);
+    super(options, nameOrConfig, shouldEnablePersistence, settings, platformId, zone, persistenceSettings);
   }
 
   /**
