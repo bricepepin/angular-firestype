@@ -21,10 +21,10 @@ export class AngularFirestype extends AngularFirestore {
   constructor(@Inject(FirebaseOptionsToken) options: FirebaseOptions,
       @Optional() @Inject(FirebaseNameOrConfigToken) nameOrConfig: string | FirebaseAppConfig | undefined,
       @Optional() @Inject(EnablePersistenceToken) shouldEnablePersistence: boolean,
-      @Optional() @Inject(PersistenceSettingsToken) persistenceSettings: firestore.PersistenceSettings | undefined,
       @Optional() @Inject(FirestoreSettingsToken) settings: firestore.Settings,
       @Inject(PLATFORM_ID) platformId: Object,
       zone: NgZone,
+      @Optional() @Inject(PersistenceSettingsToken) persistenceSettings: firestore.PersistenceSettings | undefined,
       @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
     super(options, nameOrConfig, shouldEnablePersistence, settings, platformId, zone, persistenceSettings);
   }
