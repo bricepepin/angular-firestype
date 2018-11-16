@@ -3,9 +3,9 @@ import { DocumentSnapshot } from '../document/document-snapshot';
 
 /** A typed QuerySnapshot */
 export interface QuerySnapshot<T> extends firestore.QuerySnapshot {
-    /** Get the Documents corresponding to this query snapshot */
-    documents(): DocumentSnapshot<T>[];
+    /** Custom objects from the data of this query */
+    values: T[];
 
-    /** Get the custom objects from the data of this query */
-    models(): T[];
+    /** Documents corresponding to this query snapshot */
+    documents: DocumentSnapshot<T>[];
 }

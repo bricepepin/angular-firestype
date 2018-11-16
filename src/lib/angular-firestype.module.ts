@@ -2,13 +2,13 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { EnablePersistenceToken } from '@angular/fire/firestore';
 
 import { AngularFirestype } from './angular-firestype.service';
-import { ModelToken } from './model/model-token';
-import { ModelType } from './model/model-type';
+import { ModelToken } from './model-token';
+import { ValueType } from './value/value-type';
 import { ObjectOf } from './object-of';
 
 /**
- * Typed AngularFirestore. Needs to be initialiazed with AngularFirestypeModule.forRoot(model)
- * where model is an object of ModelType to properly process type handling.
+ * Typed AngularFirestore. Needs to be initialiazed with AngularFirestypeModule.forRoot(value)
+ * where value is an object of ValueType to properly process type handling.
  */
 @NgModule({
   providers: [
@@ -17,10 +17,10 @@ import { ObjectOf } from './object-of';
 })
 export class AngularFirestypeModule {
   /**
-   * Initialize AngularFirestype with the model description.
+   * Initialize AngularFirestype with the provided model.
    * Optionnaly enable persistance if second parameter is true.
    */
-  static forRoot(model: ObjectOf<ModelType<any>>, enablePersistence: boolean = false): ModuleWithProviders {
+  static forRoot(model: ObjectOf<ValueType<any>>, enablePersistence: boolean = false): ModuleWithProviders {
     return {
       ngModule: AngularFirestypeModule,
       providers: [

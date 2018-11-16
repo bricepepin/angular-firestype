@@ -6,8 +6,8 @@ import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceTok
 
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
-import { ModelToken } from './model/model-token';
-import { ModelType } from './model/model-type';
+import { ModelToken } from './model-token';
+import { ValueType } from './value/value-type';
 import { ObjectOf } from './object-of';
 import { Transaction } from './transaction/transaction';
 import { Query } from './collection/query';
@@ -25,7 +25,7 @@ export class AngularFirestype extends AngularFirestore {
       @Inject(PLATFORM_ID) platformId: Object,
       zone: NgZone,
       @Optional() @Inject(PersistenceSettingsToken) persistenceSettings: firestore.PersistenceSettings | undefined,
-      @Inject(ModelToken) readonly model: ObjectOf<ModelType<any>> = {}) {
+      @Inject(ModelToken) readonly model: ObjectOf<ValueType<any>> = {}) {
     super(options, nameOrConfig, shouldEnablePersistence, settings, platformId, zone, persistenceSettings);
   }
 
@@ -68,8 +68,6 @@ export class AngularFirestype extends AngularFirestore {
    * error will be returned.
    */
   runTransaction<T>(updateFunction: (transaction: Transaction) => Promise<T>): Promise<T> {
-    return this.firestore.runTransaction(fTransaction => {
-      return updateFunction(new Transaction(fTransaction, this));
-    });
+    return this.firestore.runTransaction(fTransaction => updateFunction(new Transaction(fTransaction, this)));
   }
 }
