@@ -3,7 +3,7 @@ import { AngularFirestoreDocument, QueryFn, Action } from '@angular/fire/firesto
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ModelTransformer } from '../model/model-transformer';
+import { ValueTransformer } from '../value/value-transformer';
 import { Collection } from '../collection/collection';
 import { DocumentSnapshot } from './document-snapshot';
 import { Query } from '../collection/query';
@@ -12,20 +12,20 @@ import { AngularFirestype } from '../angular-firestype.service';
 /** Typed document */
 export class Document<T> extends AngularFirestoreDocument<T> {
   readonly id: string;
-  private transformer: ModelTransformer<T>;
+  private transformer: ValueTransformer<T>;
 
   constructor(ref: firestore.DocumentReference, private db: AngularFirestype) {
     super(ref, db);
     this.id = ref.id;
-    this.transformer = new ModelTransformer<T>(this.ref.path, this.db);
+    this.transformer = new ValueTransformer<T>(this.ref.path, this.db);
   }
 
   /** Return a typed Document from a generic DocumentSnapshot and a transformer */
-  static fromSnapshot<T>(firestoreSnapshot: firestore.DocumentSnapshot, transformer: ModelTransformer<T>, db: AngularFirestype)
+  static fromSnapshot<T>(firestoreSnapshot: firestore.DocumentSnapshot, transformer: ValueTransformer<T>, db: AngularFirestype)
       : DocumentSnapshot<T> {
     const snapshot = firestoreSnapshot as DocumentSnapshot<T>;
-    snapshot.document = () => new Document<T>(snapshot.ref, db);
-    snapshot.model = () => transformer.toModel(snapshot.data());
+    snapshot.document = new Document<T>(snapshot.ref, db);
+    snapshot.value = transformer.toValue(snapshot.data());
     return snapshot;
   }
 
@@ -48,13 +48,22 @@ export class Document<T> extends AngularFirestoreDocument<T> {
 
   /** Listen to snapshot updates from the document. */
   snapshotChanges(): Observable<Action<DocumentSnapshot<T>>> {
-    return super.snapshotChanges()
-      .pipe(
-        map(action => {
-          Document.fromSnapshot<T>(action.payload, this.transformer, this.db);
-          return action as Action<DocumentSnapshot<T>>;
-        })
-      );
+    return super.snapshotChanges().pipe(
+      map(action => {
+        Document.fromSnapshot<T>(action.payload, this.transformer, this.db);
+        return action as Action<DocumentSnapshot<T>>;
+      })
+    );
+  }
+
+  /** Listen to document updates. */
+  documentChanges(): Observable<DocumentSnapshot<T>> {
+    return this.snapshotChanges().pipe(map(action => action.payload));
+  }
+
+  /** Listen to unwrapped snapshot updates from the document. */
+  valueChanges(): Observable<T> {
+    return this.documentChanges().pipe(map(doc => doc.value));
   }
 
   /** Retrieve the document once */
@@ -63,7 +72,7 @@ export class Document<T> extends AngularFirestoreDocument<T> {
   }
 
   /** Retrieve the value of the document once */
-  model(options?: firestore.GetOptions): Observable<T> {
-    return this.get(options).pipe(map(snapshot => snapshot.model()));
+  value(options?: firestore.GetOptions): Observable<T> {
+    return this.get(options).pipe(map(snapshot => snapshot.value));
   }
 }

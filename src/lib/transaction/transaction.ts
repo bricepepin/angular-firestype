@@ -1,7 +1,7 @@
 import { firestore } from 'firebase/app';
 import { Document } from '../document/document';
 import { DocumentSnapshot } from '../document/document-snapshot';
-import { ModelTransformer } from '../model/model-transformer';
+import { ValueTransformer } from '../value/value-transformer';
 import { AngularFirestype } from '../angular-firestype.service';
 
 /**
@@ -21,7 +21,7 @@ export class Transaction {
      * @return A DocumentSnapshot for the read data.
      */
     get<T>(document: Document<T>): Promise<DocumentSnapshot<T>> {
-        const transformer = new ModelTransformer<T>(document.ref.path, this.db);
+        const transformer = new ValueTransformer<T>(document.ref.path, this.db);
 
         return this.transaction.get(document.ref)
             .then(documentSnapshot => Document.fromSnapshot<T>(documentSnapshot, transformer, this.db));
@@ -38,7 +38,7 @@ export class Transaction {
      * @return This `Transaction` instance. Used for chaining method calls.
      */
     set<T>(document: Document<T>, data: T, options?: firestore.SetOptions): Transaction {
-        const transformer = new ModelTransformer<T>(document.ref.path, this.db);
+        const transformer = new ValueTransformer<T>(document.ref.path, this.db);
         this.transaction.set(document.ref, transformer.toData(data), options);
         return this;
     }
@@ -58,7 +58,7 @@ export class Transaction {
     update<T>(document: Document<T>, dataOrField: Partial<T> | string | firestore.FieldPath, value?: any, ...moreFieldsAndValues: any[])
             : Transaction {
         if (value === undefined) {
-            const transformer = new ModelTransformer<T>(document.ref.path, this.db);
+            const transformer = new ValueTransformer<T>(document.ref.path, this.db);
             this.transaction.update(document.ref, transformer.toPartialData(dataOrField as Partial<T>));
         } else {
             this.transaction.update(document.ref, dataOrField as string | firestore.FieldPath, value, ...moreFieldsAndValues);

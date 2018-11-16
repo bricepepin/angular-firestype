@@ -1,5 +1,5 @@
-/** Options to apply on model transformation */
-export interface ModelOptions<T> {
+/** Options to apply on value transformation */
+export interface ValueOptions<T> {
     /** Transform firebase references to a string of the reference path on transformation if set to true */
     refAsPath?: boolean;
 
