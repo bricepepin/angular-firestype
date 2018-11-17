@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { ObjectOf } from './object-of';
+import { ObjectOf } from './utils/object-of';
 import { ValueType } from './value/value-type';
 
 /** Injection token for value descriptors */

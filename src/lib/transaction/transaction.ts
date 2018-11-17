@@ -12,8 +12,7 @@ import { AngularFirestype } from '../angular-firestype.service';
  */
 export class Transaction {
     /** Initialize transaction with firestore internal transaction */
-    constructor(private transaction: firestore.Transaction, private db: AngularFirestype) {
-    }
+    constructor(private transaction: firestore.Transaction, private db: AngularFirestype) {}
 
     /**
      * Reads the document
@@ -21,17 +20,13 @@ export class Transaction {
      * @return A DocumentSnapshot for the read data.
      */
     get<T>(document: Document<T>): Promise<DocumentSnapshot<T>> {
-        const transformer = new ValueTransformer<T>(document.ref.path, this.db);
-
-        return this.transaction.get(document.ref)
-            .then(documentSnapshot => Document.fromSnapshot<T>(documentSnapshot, transformer, this.db));
+        return this.transaction.get(document.ref).then(snapshot => Document.fromSnapshot<T>(snapshot, this.db));
     }
 
     /**
      * Writes to the document referred to.
      * If the document does not exist yet, it will be created. If you pass
      * `SetOptions`, the provided data can be merged into the existing document.
-     *
      * @param document A document to be set.
      * @param data An instance of the document type.
      * @param options An object to configure the set behavior.
@@ -46,7 +41,6 @@ export class Transaction {
     /**
      * Updates fields in the document.
      * The update will fail if applied to a document that does not exist.
-     *
      * @param documen A document to be updated.
      * @param dataOrField: Either an object containing the fields and values with which to
      * update the document, or the first field to update. Fields can contain dots to reference nested fields
@@ -69,7 +63,6 @@ export class Transaction {
 
     /**
      * Deletes the document.
-     *
      * @param document A document to be deleted.
      * @return This `Transaction` instance. Used for chaining method calls.
      */

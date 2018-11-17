@@ -1,6 +1,6 @@
 import { ValueType } from './value-type';
 import { ValueDescriptor } from './value-descriptor';
-import { ObjectOf } from '../object-of';
+import { ObjectOf } from '../utils/object-of';
 
 /**
  * Value utility class.
