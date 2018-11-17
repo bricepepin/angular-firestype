@@ -4,7 +4,7 @@ import { EnablePersistenceToken } from '@angular/fire/firestore';
 import { AngularFirestype } from './angular-firestype.service';
 import { ModelToken } from './model-token';
 import { ValueType } from './value/value-type';
-import { ObjectOf } from './object-of';
+import { ObjectOf } from './utils/object-of';
 
 /**
  * Typed AngularFirestore. Needs to be initialiazed with AngularFirestypeModule.forRoot(value)

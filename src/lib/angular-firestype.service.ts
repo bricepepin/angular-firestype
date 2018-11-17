@@ -8,7 +8,7 @@ import { Collection } from './collection/collection';
 import { Document } from './document/document';
 import { ModelToken } from './model-token';
 import { ValueType } from './value/value-type';
-import { ObjectOf } from './object-of';
+import { ObjectOf } from './utils/object-of';
 import { Transaction } from './transaction/transaction';
 import { Query } from './collection/query';
 
