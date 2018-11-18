@@ -63,14 +63,14 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
     return super.valueChanges().pipe(map(ArrayUtils.first), map(data => this.transformer.toValue(data)));
   }
 
-  /** Add data to a collection reference. */
-  add(data: T): Promise<firestore.DocumentReference> {
-    return super.add(this.transformer.toData(data));
+  /** Add value to a collection reference. */
+  add(value: T): Promise<firestore.DocumentReference> {
+    return super.add(this.transformer.toData(value));
   }
 
-  /** Add data to a collection reference and return a Document referencing it. */
-  addDocument(data: T): Promise<Document<T>> {
-    return this.add(data).then(ref => new Document<T>(ref, this.db, this.transformer));
+  /** Add value to a collection reference and return a Document referencing it. */
+  addDocument(value: T): Promise<Document<T>> {
+    return this.add(value).then(ref => new Document<T>(ref, this.db, this.transformer));
   }
 
   /** Create a reference to a single document in a collection */

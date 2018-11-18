@@ -4,7 +4,7 @@ import { ValueOptions } from './value-options';
 /* Informations about a value used to normalize and denormalize data */
 export interface ValueDescriptor<T> {
     /**
-     * Value type. Reference to the type of data that will be send and retrieve from database.
+     * Value type. Reference to the type of value that will be send and retrieve from database.
      * The constructor needs to be idempotent to work properly.
      * This information is required.
      */

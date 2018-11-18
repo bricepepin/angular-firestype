@@ -29,14 +29,14 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     return snapshot;
   }
 
-  /** Set object data to database */
-  set(data: T, options?: firestore.SetOptions): Promise<void> {
-    return super.set(this.transformer.toData(data), options);
+  /** Set value to database */
+  set(value: T, options?: firestore.SetOptions): Promise<void> {
+    return super.set(this.transformer.toData(value), options);
   }
 
   /** Update a part of an object */
-  update(data: Partial<T>): Promise<void> {
-    return super.update(this.transformer.toPartialData(data));
+  update(value: Partial<T>): Promise<void> {
+    return super.update(this.transformer.toPartialData(value));
   }
 
   /** Create a reference to a sub-collection given a path and an optional query function. */
