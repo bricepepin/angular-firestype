@@ -49,7 +49,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   firstDocumentChanges(events?: firestore.DocumentChangeType[]): Observable<DocumentSnapshot<T>> {
     return super.snapshotChanges(events).pipe(
       map(ArrayUtils.first),
-      map(action => Document.fromSnapshot<T>(action.payload.doc, this.db, this.transformer))
+      map(action => action ? Document.fromSnapshot<T>(action.payload.doc, this.db, this.transformer) : null)
     );
   }
 
@@ -60,7 +60,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
 
   /** Listen to first document value of the query as an Observable. */
   firstValueChanges(): Observable<T> {
-    return super.valueChanges().pipe(map(ArrayUtils.first), map(data => this.transformer.toValue(data)));
+    return super.valueChanges().pipe(map(ArrayUtils.first), map(data => data ? this.transformer.toValue(data) : null));
   }
 
   /** Add value to a collection reference. */
@@ -102,7 +102,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   firstDocument(options?: firestore.GetOptions): Observable<DocumentSnapshot<T>> {
     return super.get(options).pipe(
       map(firebaseSnapshot => ArrayUtils.first(firebaseSnapshot.docs)),
-      map(doc => Document.fromSnapshot(doc, this.db, this.transformer))
+      map(doc => doc ? Document.fromSnapshot(doc, this.db, this.transformer) : null)
     );
   }
 
@@ -115,7 +115,7 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   firstValue(options?: firestore.GetOptions): Observable<T> {
     return super.get(options).pipe(
       map(firebaseSnapshot => ArrayUtils.first(firebaseSnapshot.docs)),
-      map(doc => this.transformer.toValue(doc.data()))
+      map(doc => doc ? this.transformer.toValue(doc.data()) : null)
     );
   }
 
