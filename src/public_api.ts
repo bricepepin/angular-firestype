@@ -6,7 +6,6 @@ export { Document } from './lib/document/document';
 export { DocumentChange } from './lib/document/document-change';
 export { DocumentChangeAction } from './lib/document/document-change-action';
 export { DocumentSnapshot } from './lib/document/document-snapshot';
-export { Transaction } from './lib/transaction/transaction';
 
 export { ValueDescriptor } from './lib/value/value-descriptor';
 export { ValueOptions } from './lib/value/value-options';
