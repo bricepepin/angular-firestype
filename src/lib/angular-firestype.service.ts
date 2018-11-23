@@ -1,15 +1,13 @@
 import { Injectable, Optional, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { firestore } from 'firebase/app';
 import { FirebaseOptionsToken, FirebaseNameOrConfigToken, FirebaseOptions, FirebaseAppConfig } from '@angular/fire';
-import { AngularFirestore, QueryFn, FirestoreSettingsToken, EnablePersistenceToken,
-  PersistenceSettingsToken } from '@angular/fire/firestore';
+import { AngularFirestore, FirestoreSettingsToken, EnablePersistenceToken, PersistenceSettingsToken } from '@angular/fire/firestore';
 
 import { Collection } from './collection/collection';
 import { Document } from './document/document';
 import { ModelToken } from './model-token';
 import { ValueType } from './value/value-type';
 import { ObjectOf } from './utils/object-of';
-import { Query } from './collection/query';
 
 /** Type handling for AngularFirestore */
 @Injectable({
@@ -34,10 +32,9 @@ export class AngularFirestype extends AngularFirestore {
    * @param pathOrRef
    * @param queryFn
    */
-  collection<T>(pathOrRef: string | firestore.CollectionReference, queryFn?: QueryFn): Collection<T> {
+  collection<T>(pathOrRef: string | firestore.CollectionReference): Collection<T> {
     const ref: firestore.CollectionReference = typeof pathOrRef === 'string' ? this.firestore.collection(pathOrRef) : pathOrRef;
-    const queryBuilder = queryFn as any;
-    return new Collection<T>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref, this);
+    return new Collection<T>(ref, ref, this);
   }
 
   /**

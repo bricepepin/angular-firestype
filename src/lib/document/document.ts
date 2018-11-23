@@ -1,21 +1,19 @@
 import { firestore } from 'firebase/app';
-import { AngularFirestoreDocument, QueryFn, Action } from '@angular/fire/firestore';
+import { AngularFirestoreDocument, Action } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ValueTransformer } from '../value/value-transformer';
 import { Collection } from '../collection/collection';
 import { DocumentSnapshot } from './document-snapshot';
-import { Query } from '../collection/query';
 import { AngularFirestype } from '../angular-firestype.service';
 
 /** Typed document */
 export class Document<T> extends AngularFirestoreDocument<T> {
   readonly id: string;
   readonly path: string;
-  private transformer: ValueTransformer<T>;
 
-  constructor(ref: firestore.DocumentReference, private db: AngularFirestype, transformer: ValueTransformer<T> = null) {
+  constructor(ref: firestore.DocumentReference, private db: AngularFirestype, private transformer: ValueTransformer<T> = null) {
     super(ref, db);
     this.id = ref.id;
     this.path = ref.path;
@@ -42,10 +40,9 @@ export class Document<T> extends AngularFirestoreDocument<T> {
   }
 
   /** Create a reference to a sub-collection given a path and an optional query function. */
-  collection<U>(path: string, queryFn?: QueryFn): Collection<U> {
+  collection<U>(path: string): Collection<U> {
     const ref = this.ref.collection(path);
-    const queryBuilder = queryFn as any;
-    return new Collection<U>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref, this.db);
+    return new Collection<U>(ref, ref, this.db);
   }
 
   /** Return the parent collection */

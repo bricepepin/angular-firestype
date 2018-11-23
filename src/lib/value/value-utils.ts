@@ -7,9 +7,9 @@ import { ObjectOf } from '../utils/object-of';
  */
 export class ValueUtils {
     /** Return the valueType matching provided path */
-    static getValueType<T>(path: string = '', value: ObjectOf<ValueType<any>>): ValueType<T> {
+    static getValueType<T>(path: string = '', model: ObjectOf<ValueType<any>>): ValueType<T> {
         const segments: string[] = path.replace(/^\//, '').split('/');
-        let current: ValueType<T> = value[segments[0]];
+        let current: ValueType<T> = model[segments[0]];
 
         for (let i = 2; i < segments.length; i += 2) {
             const valueDescriptor: ValueDescriptor<any> = this.getValueDescriptor(current);
