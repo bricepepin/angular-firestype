@@ -12,12 +12,14 @@ import { AngularFirestype } from '../angular-firestype.service';
 /** Typed document */
 export class Document<T> extends AngularFirestoreDocument<T> {
   readonly id: string;
+  readonly path: string;
   private transformer: ValueTransformer<T>;
 
   constructor(ref: firestore.DocumentReference, private db: AngularFirestype, transformer: ValueTransformer<T> = null) {
     super(ref, db);
     this.id = ref.id;
-    this.transformer = transformer || new ValueTransformer<T>(this.ref.path, this.db);
+    this.path = ref.path;
+    this.transformer = transformer || new ValueTransformer<T>(ref.path, db);
   }
 
   /** Return a typed Document from a generic DocumentSnapshot and a transformer */
@@ -44,6 +46,11 @@ export class Document<T> extends AngularFirestoreDocument<T> {
     const ref = this.ref.collection(path);
     const queryBuilder = queryFn as any;
     return new Collection<U>(ref, queryFn ? queryBuilder(new Query(ref)).build() : ref, this.db);
+  }
+
+  /** Return the parent collection */
+  parent(): Collection<T> {
+    return new Collection<T>(this.ref.parent, null, this.db, this.transformer);
   }
 
   /** Listen to snapshot updates from the document. */

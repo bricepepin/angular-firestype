@@ -12,11 +12,16 @@ import { DocumentSnapshot } from '../document/document-snapshot';
 import { ArrayUtils } from '../utils/array-utils';
 
 export class Collection<T> extends AngularFirestoreCollection<T> {
+  readonly id: string;
+  readonly path: string;
   private transformer: ValueTransformer<T>;
 
-  constructor(ref: firestore.CollectionReference, query: firestore.Query, private db: AngularFirestype) {
+  constructor(ref: firestore.CollectionReference, query: firestore.Query, private db: AngularFirestype,
+      transformer: ValueTransformer<T> = null) {
     super(ref, query, db);
-    this.transformer = new ValueTransformer<T>(this.ref.path, this.db);
+    this.id = ref.id;
+    this.path = ref.path;
+    this.transformer = transformer || new ValueTransformer<T>(ref.path, db);
   }
 
  /**
@@ -76,6 +81,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   /** Create a reference to a single document in a collection */
   document(path?: string): Document<T> {
     return new Document<T>(this.ref.doc(path), this.db, this.transformer);
+  }
+
+  /** Return the parent document */
+  parent<U>(): Document<U> {
+    return this.ref.parent ? new Document<U>(this.ref.parent, this.db) : null;
   }
 
   /**
