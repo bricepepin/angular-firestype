@@ -92,14 +92,14 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   }
 
   /** Retrieve the documents of the query once */
-  documents(options?: firestore.GetOptions): Observable<DocumentSnapshot<T>[]> {
+  getDocuments(options?: firestore.GetOptions): Observable<DocumentSnapshot<T>[]> {
     return super.get(options).pipe(
       map(firebaseSnapshot => firebaseSnapshot.docs.map(doc => Document.fromSnapshot(doc, this.db, this.transformer)))
     );
   }
 
   /** Retrieve the first document of the query once */
-  firstDocument(options?: firestore.GetOptions): Observable<DocumentSnapshot<T>> {
+  getFirstDocument(options?: firestore.GetOptions): Observable<DocumentSnapshot<T>> {
     return super.get(options).pipe(
       map(firebaseSnapshot => ArrayUtils.first(firebaseSnapshot.docs)),
       map(doc => doc ? Document.fromSnapshot(doc, this.db, this.transformer) : null)
