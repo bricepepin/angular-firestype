@@ -145,7 +145,7 @@ AngularFirestype presents a few differences with AngularFirestore :
 - You cannot add a document to a collection not defined in AngularFiretype's model mapping.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
     They work with custom types, inferred from the collection path and the provided model.
-- `Collection` queries should be build using operator chaining like in firebase firestore. Here is an exemple : `db.collection('items').where('size', '==', 'large')`.
+- `Collection` queries should be built using operator chaining like in firebase firestore. Here is an exemple : `db.collection('items').where('size', '==', 'large')`.
 
 - `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction`, and `QuerySnapShot` have been redefined to work with custom types.
 - `DocumentSnapshot` has a new `value` property wih the instancied custom object, and `document` to get the `Document` reference. `QuerySnapShot` have similar properties with `values` and `documents`.
