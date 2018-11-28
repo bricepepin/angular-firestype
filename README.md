@@ -8,7 +8,7 @@ Using a mapping object, it can add custom objects and get instancied data from F
 
 ## Install
 ```bash
-npm install firebase @angular/fire angular-firestype --save
+npm i angular-firestype --save
 ```
 
 ## Use
@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestypeModule, ModelType } from 'angular-firestype';
+import { AngularFirestypeModule, ValueType } from 'angular-firestype';
 import { environment } from '../environments/environment';
 
 import { User } from './user.ts';
@@ -30,7 +30,7 @@ import { Message } from './message.ts';
  * Definition of the app model mapping.
  * For more information, see part #mapping-object below.
  */
-const model: {[key: string]: ModelType<any>} = {
+const model: {[key: string]: ValueType<any>} = {
   users: {
     type: User,
     arguments: ['username', 'picture'],
@@ -58,7 +58,7 @@ export class AppModule {}
 `AngularFirestypeModule` should replace your `AngularFirestoreModule` if you have one imported.
 
 ### Service injection and data manipulation
-Then just inject service `AngularFirestype` and use it to get and set data to Firestore :
+Then just inject service `AngularFirestype` and use it to get and set values to Firestore :
 ```ts
 import { Component } from '@angular/core';
 import { AngularFirestype, Collection, Document } from 'angular-firestype';
@@ -84,20 +84,20 @@ export class AppComponent {
    }
 }
 ```
-`AngularFirestype` acts just as `AngularFirestore` but uses instances of custom objects defined in a mapping object.
+`AngularFirestype` acts just as `AngularFirestore` but uses instances of custom objects defined in a provided model.
 
-## Mapping object
+## Model
 In order for AngularFirestype to know how to transform your custom object to raw objects and instanciate them back from Firestore, you need to provide a mapping object containing data about your application model.
 
-The mapping object is a map of `ModelType`, himself either a class for simple custom objects or a `ModelDescriptor` for more complex ones.
-Here is an exemple of a mapping object :
+It is a map of `ValueType`, himself either a class for simple custom objects or a `ValueDescriptor` for more complex ones.
+Here is an exemple of a model :
 ```ts
-import { ModelType } from 'angular-firestype';
+import { ValueType } from 'angular-firestype';
 import { User } from './user.ts';
 import { Address } from './address.ts';
 import { Message } from './message.ts';
 
-const model: {[key: string]: ModelType<any>} = {    // {[key: string]: ModelType<any>} for TypeScript type check
+const model: {[key: string]: ValueType<any>} = {    // {[key: string]: ValueType<any>} for TypeScript type check
   messages: Message,
   users: {
     type: User,
@@ -116,42 +116,40 @@ const model: {[key: string]: ModelType<any>} = {    // {[key: string]: ModelType
 };
 ```
 
-The mapping object `model` has two entries `messages` and `users`. They both represent a root collection in Firestore : /messages and /users.
+This `model` has two entries `messages` and `users`. They both represent a root collection in Firestore : /messages and /users.
 - `messages` will be instances of class `Message`, a simple custom class. A class is simple if it only contains basic types and no custom ones.
-- `users` is a more complex one and needs to be described as a `ModelDescriptor`.
+- `users` is a more complex one and needs to be described as a `ValueDescriptor`.
 
- `ModelDescriptor` has the following attributes :
-- `type` : class that will be instancied for this collection (`User` for `users` collection).
+ `ValueDescriptor` has the following attributes :
+- `type` : class that will be instancied for this collection (`User` for the `users` collection).
  The constructor needs to be idempotent to work properly.
 - `arguments` : array of arguments names to send to the constructor.
  If this attribute is defined, the constructor will be called with the values of the arguments names *in order*.
  For exemple, documents of the collection `users` will be instancied this way : `new User(valueOfUsername, valueOfPicture)`.
  If not defined, the constructor is called without arguments, like `new Message()`.
  AngularFirestype only handle object's attributes as constructor arguments. Other ones need to be optional.
-- `structure` : map of `ModelType`. This is the internal object description. AngularFirestype only needs to know about instancied types and automatically handle basic types.
+- `structure` : map of `ValueType`. This is the internal object description. AngularFirestype only needs to know about custom types and automatically handle basic types.
  In the case of `users`, the `structure` attribute is saying that the class `User` has a custom type `Address` as attribute `address`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested custom types.
-- `elements` : `ModelType` defining the custom type for elements contained in a collection. A  `ModelDescriptor` can't have both `structure` and `elements` defined, as it represents either a custom object or a collection of custom objects.
-- `subcollections` : map of `ModelType`. Map of the collection subcollections and their corresponding custom types.
+- `elements` : `ValueType` defining the custom type for elements contained in a collection. A  `ValueDescriptor` can't have both `structure` and `elements` defined, as it represents either a custom object or a collection of custom objects.
+- `subcollections` : map of `ValueType`. Map of the collection subcollections and their corresponding custom types.
  Works the same as `structure` but for collections instead of objects.
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
- - `options` : Additional options for this `ModelDescriptor`. Options implements interface `ModelOptions`.
+ - `options` : Additional options for this `ValueDescriptor`. Options implements interface `ValueOptions`.
 
-AngularFiretype add some model checking : you cannot add a document to a collection not defined in your mapping object. If you try to do so, you'll get the following error: *Model descriptor not found for path: your/current/path*
+AngularFiretype add some model checking : you cannot add a document to a collection not defined in your `model`. If you try to do so, you'll get the following error: *Value descriptor not found for path: your/current/path*
 
 ## Differences with AngularFirestore
 AngularFirestype presents a few differences with AngularFirestore :
 - The module is initialized via `AngularFirestypeModule.forRoot(model)` :
-    This is used to pass the mapping object to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
+    This is used to pass the model to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
 - You cannot add a document to a collection not defined in AngularFiretype's model mapping.
 - `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
-    They work with custom types, inferred from the collection path and the mapping object.
-- `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction`, `QuerySnapShot` and `Transaction` have been redefined to work with custom types.
+    They work with custom types, inferred from the collection path and the provided model.
+- `Collection` queries should be build using operator chaining like in firebase firestore. Here is an exemple : `db.collection('items').where('size', '==', 'large')`.
 
-A few functions have been added to those classes to deal with typing :
-- `Document` has a new `model()` method allowing to get a one time instancied custom object without additional steps.
-- `DocumentSnapshot` has a new `model()` method allowing to get the instancied custom object, and `document()` to get a `Document` reference.
-- `Collection` has a new `models()` method allowing to geta one time instancied custom objects, and `document()` to get a `Document` reference.
-- `QuerySnapShot` has a new `models()` method allowing to get the instancied custom objects, and `documents()` to get an array of `Document` references.
+- `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction`, and `QuerySnapShot` have been redefined to work with custom types.
+- `DocumentSnapshot` has a new `value` property wih the instancied custom object, and `document` to get the `Document` reference. `QuerySnapShot` have similar properties with `values` and `documents`.
+- There is multiple utility functions un `Document` and `Collection` like `documentChanges()` allowing to access your data more easily.
 
 ## Contribution
 Any contribution is appreciated : simply use AngularFirestype, talk about it, give some feedback or even develop something. And if you feel like it, you can support me through Paypal :

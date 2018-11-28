@@ -1,14 +1,51 @@
-# [9.0.0](https://github.com/bricepepin/angular-firestype/compare/8.0.0...9.0.0) (2018-11-07)
-
-### BREAKING CHANGES
-* **@angular/fire** Update from angularfire2 to @angular/fire package. Now needs @angular/fire as peer dependency.
-* **collection** In Collection, `doc()` is back to @angular/fire behaviour to avoid compatibility problems. You should use `document()` to get a Document instance instead.
+# [9.0.0](https://github.com/bricepepin/angular-firestype/compare/8.0.0...9.0.0) (2018-11-28)
 
 ### Features
 
-* **angular:** Move to angular@7.0.0 peer dependency ([5ff0937](https://github.com/bricepepin/angular-firestype/commit/5ff0937))*
-**document:** add `get()` to retrieve a document once, and `model()` to retrieve the value of the document once ([d98a073](https://github.com/bricepepin/angular-firestype/commit/d98a073))
-* **collection:** add `get()` to retrieve a query once, and `models()` to retrieve the values of the query once ([fcd4355](https://github.com/bricepepin/angular-firestype/commit/fcd4355))
+* **document:** add `get()` function to retrieve the document once, and some utility functions :
+ - `documentChanges()` returns the `DocumentSnapshot` corresponding to this `Document` only once
+ - `value()` returns the value of the document only once
+([d98a073](https://github.com/bricepepin/angular-firestype/commit/d98a073))([3150166](https://github.com/bricepepin/angular-firestype/commit/3150166))([736bff3](https://github.com/bricepepin/angular-firestype/commit/736bff3))
+
+add `get()` to retrieve a document once, and `model()` to retrieve the value of the document once
+
+* **collection:** add `get()` function to retrieve a query once, and multiple utility functions :
+ - `documentChanges()` returns an array of `DocumentSnapshot` returned by the query
+ - `firstDocumentChanges()` returns the first `DocumentSnapshot` returned by the query
+ - `getDocuments()` returns an array of `DocumentSnapshot` returned by the query only once
+ - `getFirstDocument()` returns the the first `DocumentSnapshot` returned by the query only once
+ - `values()` returns an array of values returned by the query only once
+ ([fcd4355](https://github.com/bricepepin/angular-firestype/commit/fcd4355))([3150166](https://github.com/bricepepin/angular-firestype/commit/3150166))([736bff3](https://github.com/bricepepin/angular-firestype/commit/736bff3))
+
+* **query snapshot:** add `QuerySnapshot` class returned by `Collection.get()` function adding `documents` and `values` properties. It has the same use that `DoucmentSnapshot` provide ([3150166](https://github.com/bricepepin/angular-firestype/commit/3150166))
+* **collection and document:** add properties `id` and `path` and funciton `parent()` to `Collection` and `document` for ease of use ([77c6236](https://github.com/bricepepin/angular-firestype/commit/77c6236))
+* **service:** add new persistenceSettings to AngularFirestype service ([f5089a2](https://github.com/bricepepin/angular-firestype/commit/f5089a2))
+* **angular:** move to angular@7.0.0 peer dependency ([5ff0937](https://github.com/bricepepin/angular-firestype/commit/5ff0937))*
+
+
+### Performance Improvements
+
+* **collection and document:** optimize typing data for most of the querying functions in order to improve queries ([736bff3](https://github.com/bricepepin/angular-firestype/commit/736bff3))
+
+
+### BREAKING CHANGES
+
+This version include some drastic changes that will require actions to upgrade. Breaking changes should be limited from now on.
+
+* **model:** `model` was referencing two different concepts: custom type objects and the whole application data model. `model` new reference only the whole application data model while custom type objects are now referenced as `value`. In addition, `DocumentSnapshot` now adds properties instead of functions to ease their use in Angular apps.
+
+Those changes will need some work as `DocumentSnapshot` has been redefined :
+ - function `document()` is changed to property `document`
+ - function `model()` is changed to property `value`
+
+Classes `ModelDescriptor`, `ModelOptions`, `ModelTransformer`, `ModelType` are changed to `ValueDescriptor`, `ValueOptions`, `ValueTransformer`, `ValueType` respectively.
+([3150166](https://github.com/bricepepin/angular-firestype/commit/3150166))
+
+* **query:** add ability to use query operators directly from `Collection` like in firebase. This allow chaining without the add of an intermediate function. You can't use @angular/fire query parameter anymore when getting a `Collection` to ensure you are working with AngularFirestype `Collection`. For exemple, `db.collection('items', ref => ref.where('size', '==', 'large'))` will become `db.collection('items').where('size', '==', 'large')`. ([581ac1b](https://github.com/bricepepin/angular-firestype/commit/581ac1b))
+
+* **collection:** `doc()` is back to @angular/fire behaviour to avoid compatibility problems. You should use `document()` to get a Document instance instead ([4a51306](https://github.com/bricepepin/angular-firestype/commit/4a51306))
+* **transaction:** remove typed transaction as this kind of operations should be done server side instead of unsafe front end ([4ad4319](https://github.com/bricepepin/angular-firestype/commit/4ad4319))
+* **@angular/fire:** update from angularfire2 to @angular/fire package. Now needs @angular/fire as peer dependency ([5ff0937](https://github.com/bricepepin/angular-firestype/commit/5ff0937))
 
 
 <a name="8.0.0"></a>
@@ -26,6 +63,7 @@ Here is the list of the removed promises :
 - Document:
   - current
   - currentSnapshot
+
 
 <a name="7.0.0"></a>
 # [7.0.0](https://github.com/bricepepin/angular-firestype/compare/6.2.0...7.0.0) (2018-05-23)
