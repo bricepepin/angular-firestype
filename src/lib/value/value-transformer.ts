@@ -32,7 +32,7 @@ export class ValueTransformer<T> {
 
     /** Return an instanciation of the descriptor with provided data */
     private instanciate<U>(data: firestore.DocumentData, descriptor: ValueType<U>): U {
-        let value: U;
+        let value: U = null;
 
         if (data) {
             const valueDescriptor: ValueDescriptor<U> = ValueUtils.getValueDescriptor<U>(descriptor);
@@ -81,10 +81,10 @@ export class ValueTransformer<T> {
 
     /** Return an object from a custom type using a descriptor */
     private objectify<U>(value: U, descriptor: ValueType<U>): U {
-        let data: U;
+        let data: U = null;
 
         if (value) {
-            data = Object.assign({}, value);
+            data = value instanceof Array ? [...value] as any : Object.assign({}, value);
             const valueDescriptor: ValueDescriptor<U> = ValueUtils.getValueDescriptor<U>(descriptor);
 
             if (valueDescriptor) {
