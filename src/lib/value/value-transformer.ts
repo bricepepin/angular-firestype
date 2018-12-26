@@ -9,57 +9,61 @@ import { AngularFirestype } from '../angular-firestype.service';
 
 /** Transforms a value to data and data to value for a database path */
 export class ValueTransformer<T> {
-    private descriptor: ValueType<T>;
+    private valueType: ValueType<T>;
 
     constructor(path: string, private db: AngularFirestype, private options: ValueOptions<T> = {}) {
-        this.descriptor = ValueUtils.getValueType<T>(path, this.db.model);
+        this.valueType = ValueUtils.getValueType<T>(path, this.db.model);
     }
 
     /** Initialize a custom object from data and value descriptor */
     toValue(data: firestore.DocumentData): T {
-        return this.instanciate<T>(data, this.descriptor);
+        return this.instanciate<T>(data, this.valueType);
     }
 
     /** Get data from a custom object and value descriptor */
     toData(value: T): T {
-        return this.objectify<T>(value, this.descriptor);
+        return this.objectify<T>(value, this.valueType);
     }
 
     /** Get data from a partial custom object and value descriptor */
     toPartialData(value: Partial<T>): Partial<T> {
-        return this.objectify<Partial<T>>(value, this.descriptor);
+        return this.objectify<Partial<T>>(value, this.valueType);
     }
 
-    /** Return an instanciation of the descriptor with provided data */
-    private instanciate<U>(data: firestore.DocumentData, descriptor: ValueType<U>): U {
+    /** Return an instanciation of the data with provided valueType */
+    private instanciate<U>(data: firestore.DocumentData, valueType: ValueType<U>): U {
         let value: U = null;
 
         if (data) {
-            const valueDescriptor: ValueDescriptor<U> = ValueUtils.getValueDescriptor<U>(descriptor);
-            const constructor: new (...args: any[]) => U = ValueUtils.getType<U>(descriptor);
-            const args: any[] = [];
+            const descriptor: ValueDescriptor<U> = ValueUtils.getDescriptor<U>(valueType);
 
-            if (valueDescriptor) {
-                // Instanciate subvalues of a custom value
-                if (valueDescriptor.structure) {
-                    for (const name of Object.keys(valueDescriptor.structure)) {
-                        this.instanciateField(data, name, valueDescriptor.structure[name]);
-                    }
-                } else if (valueDescriptor.elements) {     // Instanciate elements of a collection
-                    for (const name of Object.keys(data)) {
-                        this.instanciateField(data, name, valueDescriptor.elements);
-                    }
+            if (descriptor && descriptor.structure) {
+                for (const name of Object.keys(descriptor.structure)) {
+                    this.instanciateField(data, name, descriptor.structure[name]);
                 }
+            }
+
+            if ((descriptor && descriptor.elements) || data instanceof Array) { // handle collections
+                for (const name of Object.keys(data)) {
+                    this.instanciateField(data, name, descriptor ? descriptor.elements : valueType);
+                }
+            }
+
+            // Instanciate value and affect data
+            if (data instanceof Array) {
+                value = data as any;
+            } else {
+                const constructor: new (...args: any[]) => U = ValueUtils.getType<U>(valueType);
+                const args: any[] = [];
 
                 // Extract constructor arguments
-                if (valueDescriptor.arguments) {
-                    for (const name of valueDescriptor.arguments) {
+                if (descriptor && descriptor.arguments) {
+                    for (const name of descriptor.arguments) {
                         args.push(data[name as any]);
                         delete data[name as any];
                     }
                 }
 
-                // Instanciate value and affect data
                 value = new constructor(...args);
                 Object.assign(value, data);
             }
@@ -79,36 +83,32 @@ export class ValueTransformer<T> {
         }
     }
 
-    /** Return an object from a custom type using a descriptor */
-    private objectify<U>(value: U, descriptor: ValueType<U>): U {
+    /** Return an object from a custom type using a valueType */
+    private objectify<U>(value: U, valueType: ValueType<U>): U {
         let data: U = null;
 
         if (value) {
-            data = value instanceof Array ? [...value] as any : Object.assign({}, value);
-            const valueDescriptor: ValueDescriptor<U> = ValueUtils.getValueDescriptor<U>(descriptor);
+            data = value instanceof Array ? value : Object.assign({}, value);
+            const descriptor: ValueDescriptor<U> = ValueUtils.getDescriptor<U>(valueType);
+            const options = Object.assign((descriptor && descriptor.options) || {}, this.options);
 
-            if (valueDescriptor) {
-                const options = Object.assign(valueDescriptor.options || {}, this.options);
-
-                // Objectify subvalues
-                if (valueDescriptor.structure) {
-                    for (const name of Object.keys(valueDescriptor.structure)) {
-                        this.objectifyField(data, name, valueDescriptor.structure[name]);
-                    }
-                } else if (valueDescriptor.elements) {    // Objectify elements of a collection
-                    for (const name of Object.keys(data)) {
-                        this.objectifyField(data, name, valueDescriptor.elements);
-                    }
+            if (descriptor && descriptor.structure) { // Handle sub objects
+                for (const name of Object.keys(descriptor.structure)) {
+                    this.objectifyField(data, name, descriptor.structure[name]);
                 }
-
-                // Options handling
-                if (options.timestampOnCreate && !value[options.timestampOnCreate]) {
-                    data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
+            } else if ((descriptor && descriptor.elements) || value instanceof Array) { // handle collections
+                for (const name of Object.keys(data)) {
+                    this.objectifyField(data, name, descriptor ? descriptor.elements : valueType);
                 }
+            }
 
-                if (options.timestampOnUpdate) {
-                    data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
-                }
+            // Options handling
+            if (options.timestampOnCreate && !value[options.timestampOnCreate]) {
+                data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
+            }
+
+            if (options.timestampOnUpdate) {
+                data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
             }
         }
 
