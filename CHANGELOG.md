@@ -1,3 +1,17 @@
+# [9.1.0](https://github.com/bricepepin/angular-firestype/compare/9.0.0...9.1.0) (2019-01-01)
+
+
+### Bug Fixes
+
+* **transformer:** correctly save arrays to database ([5217fdb](https://github.com/bricepepin/angular-firestype/commit/5217fdb))
+
+
+### Features
+
+* **transformer:** AngularFirestype now process arrays automatically ([00f9d3e](https://github.com/bricepepin/angular-firestype/commit/00f9d3e))
+
+
+
 # [9.0.0](https://github.com/bricepepin/angular-firestype/compare/8.0.0...9.0.0) (2018-11-28)
 
 ### Features
