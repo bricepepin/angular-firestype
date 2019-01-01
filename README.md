@@ -136,7 +136,7 @@ This `model` has two entries `messages` and `users`. They both represent a root 
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
  - `options` : Additional options for this `ValueDescriptor`. Options implements interface `ValueOptions`.
 
-AngularFiretype add some model checking : you cannot add a document to a collection not defined in your `model`. If you try to do so, you'll get the following error: *Value descriptor not found for path: your/current/path*
+AngularFiretype add some model checking : you cannot add a document to a collection not defined in your `model`. If you try to do so, you'll get the following error: *Value type not found for path: your/current/path*
 
 ## Differences with AngularFirestore
 AngularFirestype presents a few differences with AngularFirestore :

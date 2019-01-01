@@ -12,7 +12,7 @@ export class ValueTransformer<T> {
     private valueType: ValueType<T>;
 
     constructor(path: string, private db: AngularFirestype, private options: ValueOptions<T> = {}) {
-        this.valueType = ValueUtils.getValueType<T>(path, this.db.model);
+        this.valueType = ValueUtils.getValueType<T>(path, db.model);
     }
 
     /** Initialize a custom object from data and value descriptor */
@@ -39,13 +39,11 @@ export class ValueTransformer<T> {
 
             if (descriptor && descriptor.structure) {
                 for (const name of Object.keys(descriptor.structure)) {
-                    this.instanciateField(data, name, descriptor.structure[name]);
+                    data[name] = this.instanciateField(data[name], descriptor.structure[name]);
                 }
-            }
-
-            if ((descriptor && descriptor.elements) || data instanceof Array) { // handle collections
+            } else if ((descriptor && descriptor.elements) || data instanceof Array) { // handle collections
                 for (const name of Object.keys(data)) {
-                    this.instanciateField(data, name, descriptor ? descriptor.elements : valueType);
+                    data[name] = this.instanciateField(data[name], descriptor ? descriptor.elements : valueType);
                 }
             }
 
@@ -72,13 +70,13 @@ export class ValueTransformer<T> {
         return value;
     }
 
-    /** Instanciate data[name] using valueType information */
-    private instanciateField(data: firestore.DocumentData, name: string, valueType: ValueType<any>): any {
-        if (data[name] !== undefined && data[name] !== null) {
-            if (ValueUtils.getType(valueType) === Document) {
-                data[name] = this.db.doc(data[name]);
+    /** Instanciate data using valueType information */
+    private instanciateField(data: any, valueType: ValueType<any>): any {
+        if (data !== undefined) {
+            if (ValueUtils.getType(valueType) === Document && data instanceof firestore.DocumentReference) {
+                return this.db.doc(data);
             } else {
-                data[name] = this.instanciate(data[name], valueType);
+                return this.instanciate(data, valueType);
             }
         }
     }
@@ -94,11 +92,11 @@ export class ValueTransformer<T> {
 
             if (descriptor && descriptor.structure) { // Handle sub objects
                 for (const name of Object.keys(descriptor.structure)) {
-                    this.objectifyField(data, name, descriptor.structure[name]);
+                    data[name] = this.objectifyField(data[name], descriptor.structure[name]);
                 }
             } else if ((descriptor && descriptor.elements) || value instanceof Array) { // handle collections
                 for (const name of Object.keys(data)) {
-                    this.objectifyField(data, name, descriptor ? descriptor.elements : valueType);
+                    data[name] = this.objectifyField(data[name], descriptor ? descriptor.elements : valueType);
                 }
             }
 
@@ -115,13 +113,13 @@ export class ValueTransformer<T> {
         return data;
     }
 
-    /** Objectify data[name] using valueType information */
-    private objectifyField(data: firestore.DocumentData, name: string, valueType: ValueType<any>): any {
-        if (data[name] !== undefined && data[name] !== null) {
-            if (ValueUtils.getType(valueType) === Document) {
-                data[name] = this.options.refAsPath ? data[name].ref.path : data[name].ref;
+    /** Objectify data using valueType information */
+    private objectifyField(value: any, valueType: ValueType<any>): any {
+        if (value !== undefined) {
+            if (ValueUtils.getType(valueType) === Document && value instanceof Document) {
+                return this.options.refAsPath ? value.ref.path : value.ref;
             } else {
-                data[name] = this.objectify(data[name], valueType);
+                return this.objectify(value, valueType);
             }
         }
     }
