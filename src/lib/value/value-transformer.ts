@@ -73,7 +73,7 @@ export class ValueTransformer<T> {
     /** Instanciate data using valueType information */
     private instanciateField(data: any, valueType: ValueType<any>): any {
         if (data !== undefined) {
-            if (ValueUtils.getType(valueType) === Document && data instanceof firestore.DocumentReference) {
+            if (ValueUtils.getType(valueType) === Document && (data instanceof firestore.DocumentReference || typeof data === 'string')) {
                 return this.db.doc(data);
             } else {
                 return this.instanciate(data, valueType);
