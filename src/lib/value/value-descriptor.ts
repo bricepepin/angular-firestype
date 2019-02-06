@@ -23,10 +23,17 @@ export interface ValueDescriptor<T> {
      */
     structure?: {[P in keyof T]: ValueType<any>};
 
-    /**
-     * If the value is a collection, define the type of its elements.
-     */
+    /** If the value is a collection, define the type of its elements. */
     elements?: ValueType<any>;
+
+    /**
+     * Fields listed here will be ignored when saving data.
+     * Alternatively you can provide an object containing an array by operation type (set and/or update) to specialize your needs.
+     */
+    ignoreFields?: string[] | {
+        set?: string[],
+        update?: string[]
+    };
 
     /** Map of value's subcollections that need to be instancied */
     subcollections?: {[P in keyof T]: ValueType<any>};

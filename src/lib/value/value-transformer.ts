@@ -27,7 +27,7 @@ export class ValueTransformer<T> {
 
     /** Get data from a partial custom object and value descriptor */
     toPartialData(value: Partial<T>): Partial<T> {
-        return this.objectify<Partial<T>>(value, this.valueType);
+        return this.objectify<Partial<T>>(value, this.valueType, true);
     }
 
     /** Return an instanciation of the data with provided valueType */
@@ -82,7 +82,7 @@ export class ValueTransformer<T> {
     }
 
     /** Return an object from a custom type using a valueType */
-    private objectify<U>(value: U, valueType: ValueType<U>): U {
+    private objectify<U>(value: U, valueType: ValueType<U>, partial: boolean = false): U {
         let data: U = null;
 
         if (value) {
@@ -97,6 +97,21 @@ export class ValueTransformer<T> {
             } else if ((descriptor && descriptor.elements) || value instanceof Array) { // handle collections
                 for (const name of Object.keys(data)) {
                     data[name] = this.objectifyField(data[name], descriptor ? descriptor.elements : valueType);
+                }
+            }
+
+            // Ignore fields
+            if (descriptor && descriptor.ignoreFields) {
+                let ignoreFields = descriptor.ignoreFields;
+
+                if (!(ignoreFields instanceof Array)) {
+                    ignoreFields = partial ? ignoreFields.update : ignoreFields.set;
+                }
+
+                if (ignoreFields) {
+                    for (const field of ignoreFields) {
+                        delete data[field];
+                    }
                 }
             }
 
