@@ -1,14 +1,28 @@
-# [9.1.0](https://github.com/bricepepin/angular-firestype/compare/9.0.0...9.1.0) (2019-01-01)
+# [9.2.0](https://github.com/bricepepin/angular-firestype/compare/9.1.0...9.2.0) (2019-02-06)
+
+
+### Features
+
+* **ignore-fields:** add ability to automatically ignore fields of an object when setting/updating value to database ([72b03a2](https://github.com/bricepepin/angular-firestype/commit/72b03a2))
 
 
 ### Bug Fixes
 
-* **transformer:** correctly save arrays to database ([5217fdb](https://github.com/bricepepin/angular-firestype/commit/5217fdb))
+* **transformer:** `Document` instanciation works with option refAsPath ([76159cc](https://github.com/bricepepin/angular-firestype/commit/76159cc))
+
+
+
+# [9.1.0](https://github.com/bricepepin/angular-firestype/compare/9.0.0...9.1.0) (2019-01-01)
 
 
 ### Features
 
 * **transformer:** AngularFirestype now process arrays automatically ([00f9d3e](https://github.com/bricepepin/angular-firestype/commit/00f9d3e))
+
+
+### Bug Fixes
+
+* **transformer:** correctly save arrays to database ([5217fdb](https://github.com/bricepepin/angular-firestype/commit/5217fdb))
 
 
 

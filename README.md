@@ -131,6 +131,7 @@ This `model` has two entries `messages` and `users`. They both represent a root 
 - `structure` : map of `ValueType`. This is the internal object description. AngularFirestype only needs to know about custom types and automatically handle basic types.
  In the case of `users`, the `structure` attribute is saying that the class `User` has a custom type `Address` as attribute `address`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested custom types.
 - `elements` : `ValueType` defining the custom type for elements contained in a collection. A  `ValueDescriptor` can't have both `structure` and `elements` defined, as it represents either a custom object or a collection of custom objects.
+- `ignoreFields` : Array of fields to ignore when performing a save in the database. Can also be an object containing arrays for set and/or update operations.
 - `subcollections` : map of `ValueType`. Map of the collection subcollections and their corresponding custom types.
  Works the same as `structure` but for collections instead of objects.
  For example, collection `users` have a subcollection `messages` (/users/{userId}/messages in Firestore) of custom type `Message`. We could also have a complex custom type here and describe it like we did with the collection `users`, allowing nested subcollections.
