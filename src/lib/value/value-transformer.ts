@@ -31,7 +31,7 @@ export class ValueTransformer<T> {
     }
 
     /** Return an instanciation of the data with provided valueType */
-    private instanciate<U>(data: firestore.DocumentData, valueType: ValueType<U>): U {
+    private instanciate<U>(data: any, valueType: ValueType<U>): U {
         let value: U = null;
 
         if (data) {
@@ -57,8 +57,8 @@ export class ValueTransformer<T> {
                 // Extract constructor arguments
                 if (descriptor && descriptor.arguments) {
                     for (const name of descriptor.arguments) {
-                        args.push(data[name as any]);
-                        delete data[name as any];
+                        args.push(data[name]);
+                        delete data[name];
                     }
                 }
 
@@ -83,7 +83,7 @@ export class ValueTransformer<T> {
 
     /** Return an object from a custom type using a valueType */
     private objectify<U>(value: U, valueType: ValueType<U>, partial: boolean = false): U {
-        let data: U = null;
+        let data: any = null;
 
         if (value) {
             data = value instanceof Array ? value : Object.assign({}, value);
@@ -117,11 +117,11 @@ export class ValueTransformer<T> {
 
             // Options handling
             if (options.timestampOnCreate && !value[options.timestampOnCreate]) {
-                data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp() as any;
+                data[options.timestampOnCreate] = firestore.FieldValue.serverTimestamp();
             }
 
             if (options.timestampOnUpdate) {
-                data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp() as any;
+                data[options.timestampOnUpdate] = firestore.FieldValue.serverTimestamp();
             }
         }
 
