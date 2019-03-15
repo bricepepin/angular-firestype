@@ -8,6 +8,7 @@ import { Document } from './document/document';
 import { ModelToken } from './model-token';
 import { ValueType } from './value/value-type';
 import { ObjectOf } from './utils/object-of';
+import { StringUtils } from './utils/string-utils';
 
 /** Type handling for AngularFirestore */
 @Injectable({
@@ -33,7 +34,7 @@ export class AngularFirestype extends AngularFirestore {
    * @param queryFn
    */
   collection<T>(pathOrRef: string | firestore.CollectionReference): Collection<T> {
-    const ref: firestore.CollectionReference = typeof pathOrRef === 'string' ? this.firestore.collection(pathOrRef) : pathOrRef;
+    const ref = StringUtils.isString(pathOrRef) ? this.firestore.collection(pathOrRef) : pathOrRef;
     return new Collection<T>(ref, ref, this);
   }
 
@@ -45,7 +46,7 @@ export class AngularFirestype extends AngularFirestore {
    * @param pathOrRef
    */
   doc<T>(pathOrRef: string | firestore.DocumentReference): Document<T> {
-    const ref: firestore.DocumentReference = typeof pathOrRef === 'string' ? this.firestore.doc(pathOrRef) : pathOrRef;
+    const ref = StringUtils.isString(pathOrRef) ? this.firestore.doc(pathOrRef) : pathOrRef;
     return new Document<T>(ref, this);
   }
 }

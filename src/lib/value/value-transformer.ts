@@ -6,6 +6,7 @@ import { ValueType } from './value-type';
 import { ValueUtils } from './value-utils';
 import { ValueOptions } from './value-options';
 import { AngularFirestype } from '../angular-firestype.service';
+import { StringUtils } from '../utils/string-utils';
 
 /** Transforms a value to data and data to value for a database path */
 export class ValueTransformer<T> {
@@ -73,7 +74,7 @@ export class ValueTransformer<T> {
     /** Instanciate data using valueType information */
     private instanciateField(data: any, valueType: ValueType<any>): any {
         if (data !== undefined) {
-            if (ValueUtils.getType(valueType) === Document && (data instanceof firestore.DocumentReference || typeof data === 'string')) {
+            if (ValueUtils.getType(valueType) === Document && (data instanceof firestore.DocumentReference || StringUtils.isString(data))) {
                 return this.db.doc(data);
             } else {
                 return this.instanciate(data, valueType);
