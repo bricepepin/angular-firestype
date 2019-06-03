@@ -60,8 +60,10 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   }
 
   /** Listen to all documents values of the query as an Observable. */
-  valueChanges(): Observable<T[]> {
-    return super.valueChanges().pipe(map(data => data.map(element => this.transformer.toValue(element))));
+  valueChanges({}?): Observable<T[]>;
+  valueChanges<K extends string>(options: {idField: K}): Observable<(T & { [U in K]: string })[]>;
+  valueChanges<K extends string>(options: {idField?: K} = {}): Observable<T[]> {
+    return super.valueChanges(options).pipe(map(data => data.map(element => this.transformer.toValue(element))));
   }
 
   /** Listen to first document value of the query as an Observable. */

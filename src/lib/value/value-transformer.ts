@@ -23,12 +23,12 @@ export class ValueTransformer<T> {
 
     /** Get data from a custom object and value descriptor */
     toData(value: T): T {
-        return this.objectify<T>(value, this.valueType);
+        return this.objectify(value, this.valueType);
     }
 
     /** Get data from a partial custom object and value descriptor */
     toPartialData(value: Partial<T>): Partial<T> {
-        return this.objectify<Partial<T>>(value, this.valueType, true);
+        return this.objectify(value, this.valueType, true);
     }
 
     /** Return an instanciation of the data with provided valueType */
@@ -83,12 +83,12 @@ export class ValueTransformer<T> {
     }
 
     /** Return an object from a custom type using a valueType */
-    private objectify<U>(value: U, valueType: ValueType<U>, partial: boolean = false): U {
+    private objectify(value: Partial<T>, valueType: ValueType<T>, partial: boolean = false): T {
         let data: any = null;
 
         if (value) {
             data = value instanceof Array ? value : Object.assign({}, value);
-            const descriptor: ValueDescriptor<U> = ValueUtils.getDescriptor<U>(valueType);
+            const descriptor: ValueDescriptor<T> = ValueUtils.getDescriptor<T>(valueType);
             const options = Object.assign((descriptor && descriptor.options) || {}, this.options);
 
             if (descriptor && descriptor.structure) { // Handle sub objects
