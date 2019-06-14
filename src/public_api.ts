@@ -2,6 +2,7 @@ export { AngularFirestype } from './lib/angular-firestype.service';
 export { AngularFirestypeModule } from './lib/angular-firestype.module';
 
 export { Collection } from './lib/collection/collection';
+export { CollectionGroup } from './lib/collection/collection-group';
 export { Document } from './lib/document/document';
 export { DocumentChange } from './lib/document/document-change';
 export { DocumentChangeAction } from './lib/document/document-change-action';

@@ -1,5 +1,5 @@
 import { firestore } from 'firebase/app';
-import { AngularFirestoreCollection, DocumentChangeAction as ADocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestoreCollectionGroup, DocumentChangeAction as ADocumentChangeAction } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -12,18 +12,13 @@ import { DocumentSnapshot } from '../document/document-snapshot';
 import { ArrayUtils } from '../utils/array-utils';
 import { CollectionUtils } from './collection-utils';
 
-export class Collection<T> extends AngularFirestoreCollection<T> {
-  readonly id: string;
-  readonly path: string;
+export class CollectionGroup<T> extends AngularFirestoreCollectionGroup<T> {
   private fQuery: firestore.Query;
 
-  constructor(ref: firestore.CollectionReference, query: firestore.Query, private db: AngularFirestype,
-      private transformer: ValueTransformer<T> = null) {
-    super(ref, query, db);
+  constructor(private id: string, query: firestore.Query, private db: AngularFirestype, private transformer: ValueTransformer<T> = null) {
+    super(query, db);
     this.fQuery = query;
-    this.id = ref.id;
-    this.path = ref.path;
-    this.transformer = transformer || new ValueTransformer<T>(ref.path, db);
+    this.transformer = transformer || new ValueTransformer<T>(id, db);
   }
 
  /**
@@ -61,35 +56,13 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
   }
 
   /** Listen to all documents values of the query as an Observable. */
-  valueChanges({}?): Observable<T[]>;
-  valueChanges<K extends string>(options: {idField: K}): Observable<(T & { [U in K]: string })[]>;
-  valueChanges<K extends string>(options: {idField?: K} = {}): Observable<T[]> {
-    return super.valueChanges(options).pipe(map(data => data.map(element => this.transformer.toValue(element))));
+  valueChanges(): Observable<T[]> {
+    return super.valueChanges().pipe(map(data => data.map(element => this.transformer.toValue(element))));
   }
 
   /** Listen to first document value of the query as an Observable. */
   firstValueChanges(): Observable<T> {
     return super.valueChanges().pipe(map(ArrayUtils.first), map(data => data ? this.transformer.toValue(data) : null));
-  }
-
-  /** Add value to a collection reference. */
-  add(value: T): Promise<firestore.DocumentReference> {
-    return super.add(this.transformer.toData(value));
-  }
-
-  /** Add value to a collection reference and return a Document referencing it. */
-  addDocument(value: T): Promise<Document<T>> {
-    return this.add(value).then(ref => new Document<T>(ref, this.db, this.transformer));
-  }
-
-  /** Create a reference to a single document in a collection */
-  document(path?: string): Document<T> {
-    return new Document<T>(this.ref.doc(path), this.db, this.transformer);
-  }
-
-  /** Return the parent document */
-  parent<U>(): Document<U> {
-    return this.ref.parent ? new Document<U>(this.ref.parent, this.db) : null;
   }
 
   /**
@@ -141,11 +114,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param fieldPath The path to compare
    * @param opStr The operation string (e.g "<", "<=", "==", ">", ">=").
    * @param value The value for comparison
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  where(fieldPath: string | firestore.FieldPath, opStr: firestore.WhereFilterOp, value: any): Collection<T> {
+  where(fieldPath: string | firestore.FieldPath, opStr: firestore.WhereFilterOp, value: any): CollectionGroup<T> {
     const query = this.fQuery.where(fieldPath, opStr, value instanceof Document ? value.ref : value);
-    return new Collection<T>(this.ref, query, this.db, this.transformer);
+    return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 
   /**
@@ -155,11 +128,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param fieldPath The field to sort by.
    * @param directionStr Optional direction to sort by ('asc' or 'desc'). If
    * not specified, order will be ascending.
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  orderBy(fieldPath: string | firestore.FieldPath, directionStr?: firestore.OrderByDirection): Collection<T> {
+  orderBy(fieldPath: string | firestore.FieldPath, directionStr?: firestore.OrderByDirection): CollectionGroup<T> {
       const query = this.fQuery.orderBy(fieldPath, directionStr);
-      return new Collection<T>(this.ref, query, this.db, this.transformer);
+      return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 
   /**
@@ -167,11 +140,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * return up to the specified number of documents.
    *
    * @param limit The maximum number of items to return.
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  limit(limit: number): Collection<T> {
+  limit(limit: number): CollectionGroup<T> {
       const query = this.fQuery.limit(limit);
-      return new Collection<T>(this.ref, query, this.db, this.transformer);
+      return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 
   /**
@@ -184,11 +157,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param snapshotOrFieldValue the snapshot or the first field value of the document to start at.
    * @param fieldValues The other field values to start this query at, in order
    * of the query's order by.
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  startAt(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Collection<T> {
+  startAt(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): CollectionGroup<T> {
       const query = this.fQuery.startAt(snapshotOrFieldValue, fieldValues);
-      return new Collection<T>(this.ref, query, this.db, this.transformer);
+      return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 
   /**
@@ -201,11 +174,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param snapshotOrFieldValue the snapshot or the first field value of the document to start after.
    * @param fieldValues The other field values to start this query after, in order
    * of the query's order by.
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  startAfter(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Collection<T> {
+  startAfter(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): CollectionGroup<T> {
       const query = this.fQuery.startAfter(snapshotOrFieldValue, fieldValues);
-      return new Collection<T>(this.ref, query, this.db, this.transformer);
+      return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 
   /**
@@ -218,11 +191,11 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param snapshotOrFieldValue the snapshot or the first field value of the document to end before.
    * @param fieldValues The other field values to end this query before, in order
    * of the query's order by.
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  endBefore(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Collection<T> {
+  endBefore(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): CollectionGroup<T> {
       const query = this.fQuery.endBefore(snapshotOrFieldValue, fieldValues);
-      return new Collection<T>(this.ref, query, this.db, this.transformer);
+      return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 
   /**
@@ -235,10 +208,10 @@ export class Collection<T> extends AngularFirestoreCollection<T> {
    * @param snapshotOrFieldValue the snapshot or the first field value of the document to end at.
    * @param fieldValues The other field values to end this query at, in order
    * of the query's order by.
-   * @return The created Collection
+   * @return The created CollectionGroup
    */
-  endAt(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): Collection<T> {
+  endAt(snapshotOrFieldValue: DocumentSnapshot<any> | any, ...fieldValues: any[]): CollectionGroup<T> {
       const query = this.fQuery.endAt(snapshotOrFieldValue, fieldValues);
-      return new Collection<T>(this.ref, query, this.db, this.transformer);
+      return new CollectionGroup<T>(this.id, query, this.db, this.transformer);
   }
 }
