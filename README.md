@@ -144,13 +144,13 @@ AngularFirestype presents a few differences with AngularFirestore :
 - The module is initialized via `AngularFirestypeModule.forRoot(model)` :
     This is used to pass the model to AngularFirestype. If you need offline persistance, call `AngularFirestypeModule.forRoot(model, true)` instead.
 - You cannot add a document to a collection not defined in AngularFiretype's model mapping.
-- `Collection` and `Document` replace `AngularFirestoreCollection` and `AngularFirestoreDocument`.
+- `Collection`, `CollectionGroup` and `Document` replace `AngularFirestoreCollection`, `AngularFirestoreCollectionGroup` and `AngularFirestoreDocument`.
     They work with custom types, inferred from the collection path and the provided model.
-- `Collection` queries should be built using operator chaining like in firebase firestore. Here is an exemple : `db.collection('items').where('size', '==', 'large')`.
+- `Collection` and `CollectionGroup` queries should be built using operator chaining like in firebase firestore. Here is an exemple : `db.collection('items').where('size', '==', 'large')`.
 
 - `DocumentSnapshot`, `DocumentChange`, `DocumentChangeAction`, and `QuerySnapShot` have been redefined to work with custom types.
-- `DocumentSnapshot` has a new `value` property wih the instancied custom object, and `document` to get the `Document` reference. `QuerySnapShot` have similar properties with `values` and `documents`.
-- There is multiple utility functions un `Document` and `Collection` like `documentChanges()` allowing to access your data more easily.
+- `DocumentSnapshot` has a new `value` property with the instancied custom object, and `document` to get the `Document` reference. `QuerySnapShot` have similar properties with `values` and `documents`.
+- There is multiple utility functions in `Document`, `Collection` and `CollectionGroup` like `documentChanges()` allowing to access your data more easily.
 
 ## Contribution
 Any contribution is appreciated : simply use AngularFirestype, talk about it, give some feedback or even develop something. And if you feel like it, you can support me through Paypal :

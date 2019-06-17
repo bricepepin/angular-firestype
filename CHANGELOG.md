@@ -1,3 +1,14 @@
+# [9.3.0](https://github.com/bricepepin/angular-firestype/compare/9.2.0...9.3.0) (2019-06-17)
+
+
+### Features
+
+* **angularfire:** update to angular/fire 5.2.0, firebase 6 and angular 8 ([dc67c95](https://github.com/bricepepin/angular-firestype/commit/dc67c95))
+* **collection-group:** add collectionGroup support. The collectionId needs to have a defined type in the provided model ([5f1a5b1](https://github.com/bricepepin/angular-firestype/commit/5f1a5b1))
+* **type-assertions:** improve type assertions to allow object in addition to basic types in polymorphic methods ([b599513](https://github.com/bricepepin/angular-firestype/commit/b599513))
+
+
+
 # [9.2.0](https://github.com/bricepepin/angular-firestype/compare/9.1.0...9.2.0) (2019-02-06)
 
 
