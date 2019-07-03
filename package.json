@@ -1,6 +1,6 @@
 {
   "name": "angular-firestype",
-  "version": "9.3.0",
+  "version": "9.3.1",
   "description": "Type handling for AngularFirestore",
   "keywords": [
     "Angular",

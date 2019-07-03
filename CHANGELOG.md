@@ -1,3 +1,12 @@
+## [9.3.1](https://github.com/bricepepin/angular-firestype/compare/9.3.0...9.3.1) (2019-07-03)
+
+
+### Bug Fixes
+
+* **firestore-import:** import firebase/firestore in angular-firestype module to follow @angular/fire behaviour and avoid production issues ([8f609b4](https://github.com/bricepepin/angular-firestype/commit/8f609b4))
+
+
+
 # [9.3.0](https://github.com/bricepepin/angular-firestype/compare/9.2.0...9.3.0) (2019-06-17)
 
 
