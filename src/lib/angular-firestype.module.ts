@@ -6,6 +6,8 @@ import { ModelToken } from './model-token';
 import { ValueType } from './value/value-type';
 import { ObjectOf } from './utils/object-of';
 
+import 'firebase/firestore';
+
 /**
  * Typed AngularFirestore. Needs to be initialiazed with AngularFirestypeModule.forRoot(value)
  * where value is an object of ValueType to properly process type handling.

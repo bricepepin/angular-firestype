@@ -23,6 +23,7 @@
   },
   "scripts": {
     "build": "ng build angular-firestype",
+    "build-prod": "ng build angular-firestype --prod",
     "test": "ng test angular-firestype",
     "lint": "ng lint angular-firestype",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
